@@ -30,7 +30,7 @@ public class BetaXiangqiBoard
 	
 	private XiangqiColor normal = XiangqiColor.RED;
 	
-	private Map<XiangqiCoordinateImpl, XiangqiPiece> board;
+	private Map<XiangqiCoordinateImpl, XiangqiPieceImpl> board;
 	
 	BetaXiangqiBoard() {
 		
@@ -39,7 +39,7 @@ public class BetaXiangqiBoard
 	}
 	
 	// TODO: type of piece?
-	public void putPiece(XiangqiCoordinate where, XiangqiPiece piece, XiangqiColor aspect)
+	public void putPiece(XiangqiCoordinate where, XiangqiPieceImpl piece, XiangqiColor aspect)
 	{
 		
 		XiangqiCoordinateImpl loc = normalizeCoordinate(where, aspect);
@@ -48,7 +48,7 @@ public class BetaXiangqiBoard
 		
 	}
 	
-	public XiangqiPiece getPieceAt(XiangqiCoordinate where, XiangqiColor aspect)
+	public XiangqiPieceImpl getPieceAt(XiangqiCoordinate where, XiangqiColor aspect)
 	{
 		
 		// normalize coordinate
@@ -81,5 +81,19 @@ public class BetaXiangqiBoard
 
 		return new XiangqiCoordinateImpl(normalizedRank, normalizedFile);
 
+	}
+
+	public void movePiece(XiangqiCoordinate source, XiangqiCoordinate destination, XiangqiColor aspect)
+	{
+		// normalize coordinates
+		XiangqiCoordinateImpl from = normalizeCoordinate(source, aspect);
+		XiangqiCoordinateImpl to = normalizeCoordinate(destination, aspect);
+		
+		// make move
+		board.put(to, board.get(from));
+		board.put(from, null);
+		
+		return;
+		
 	}
 }

@@ -161,7 +161,7 @@ public class BetaXiangqiTestCases
 	@Test
 	public void redIsAllowedToMoveRedPiece() 
 	{	
-		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1)));
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(2,3), makeCoordinate(3,3)));
 	}
 	
 	@Test 
@@ -170,9 +170,72 @@ public class BetaXiangqiTestCases
 		assertEquals(MoveResult.ILLEGAL, game.makeMove(makeCoordinate(5,1), makeCoordinate(4,1)));
 	}
 	
+	@Test
+	public void blackIsAllowedToMoveBlackPiece() 
+	{	
+		// first move is red
+		game.makeMove(makeCoordinate(2,3), makeCoordinate(3,3));
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(2,3), makeCoordinate(3,3)));
+	}
 	
+	@Test 
+	public void blackIsNotAllowedToMoveRedPiece()
+	{
+		// first move is red
+		game.makeMove(makeCoordinate(2,3), makeCoordinate(3,3));
+		assertEquals(MoveResult.ILLEGAL, game.makeMove(makeCoordinate(5,1), makeCoordinate(4,1)));
+	}
 	
+	@Test 
+	public void soldierCanOnlyMoveOneStepForward()
+	{
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(2,3), makeCoordinate(3,3)));
+		assertEquals(MoveResult.ILLEGAL, game.makeMove(makeCoordinate(2,3), makeCoordinate(4,3)));
+	}
 	
+	@Test 
+	public void soldierCannotMoveSideways()
+	{
+		assertEquals(MoveResult.ILLEGAL, game.makeMove(makeCoordinate(2,3), makeCoordinate(2,4)));
+		assertEquals(MoveResult.ILLEGAL, game.makeMove(makeCoordinate(2,3), makeCoordinate(2,2)));
+	}
 	
+	@Test 
+	public void chariotCanMoveVerticallyForward()
+	{
+		// one step forward
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1)));
+		// three steps forward
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,1), makeCoordinate(4,1)));
+	}
+	
+	@Test 
+	public void chariotCanMoveVerticallyBackward()
+	{
+		game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1));
+		game.makeMove(makeCoordinate(1,1), makeCoordinate(4,1));
+		
+		// one step backward
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1)));
+		// three steps backward
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(4,1), makeCoordinate(1,1)));
+	}
+	
+	@Test
+	public void chariotCanMoveHorizontally()
+	{
+		game.makeMove(makeCoordinate(1,1), makeCoordinate(3,1)); // red into position
+		game.makeMove(makeCoordinate(1,1), makeCoordinate(3,1)); // black into position
+		
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(3,1), makeCoordinate(3,2)));
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(3,1), makeCoordinate(3,3)));
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(3,2), makeCoordinate(3,1)));
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(3,3), makeCoordinate(3,1)));
+	}
+	
+	public void chariotCannotOverPiece() {
+		return;
+	}
+
 	
 }

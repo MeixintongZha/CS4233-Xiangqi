@@ -66,7 +66,7 @@ public class BetaXiangqiGame implements XiangqiGame
 			return MoveResult.ILLEGAL;
 		}
 		
-		// does source have a piece with
+		// does source have a piece
 		if (board.getPieceAt(source, activeColor).getPieceType() == XiangqiPieceType.NONE) {
 			setMoveMessage(messageNoPieceAtProvidedSource);
 			return MoveResult.ILLEGAL;
@@ -79,8 +79,13 @@ public class BetaXiangqiGame implements XiangqiGame
 		}
 		
 		// is move valid (piece it self can figure this out using board, src, dest)
+		if (!board.getPieceAt(source, activeColor).isValidMove(source, destination)) {
+			// set message
+			return MoveResult.ILLEGAL;
+		}
 		
 		// move piece to location (replace what ever is there)
+		board.movePiece(source, destination, activeColor);
 		
 		// check for game winning conditions
 		
@@ -117,21 +122,26 @@ public class BetaXiangqiGame implements XiangqiGame
 	// TODO: call initializeGame?
 	private void placeStartingPieces()
 	{
+		
+		// move rules
+		MoveValidator soldierRules = new SoldierMoveValidator(board);
+		MoveValidator chariotRules = new ChariotMoveValidator(board);
+		
 		// red pieces
-		XiangqiPiece redGeneral = XiangqiPieceImpl.makePiece(XiangqiPieceType.GENERAL, XiangqiColor.RED);
-		XiangqiPiece redSoldier = XiangqiPieceImpl.makePiece(XiangqiPieceType.SOLDIER, XiangqiColor.RED);
-		XiangqiPiece redAdvisorLeft = XiangqiPieceImpl.makePiece(XiangqiPieceType.ADVISOR, XiangqiColor.RED);
-		XiangqiPiece redAdvisorRight = XiangqiPieceImpl.makePiece(XiangqiPieceType.ADVISOR, XiangqiColor.RED);
-		XiangqiPiece redChariotLeft = XiangqiPieceImpl.makePiece(XiangqiPieceType.CHARIOT, XiangqiColor.RED);
-		XiangqiPiece redChariotRight = XiangqiPieceImpl.makePiece(XiangqiPieceType.CHARIOT, XiangqiColor.RED);		
+		XiangqiPieceImpl redGeneral = XiangqiPieceImpl.makePiece(XiangqiPieceType.GENERAL, XiangqiColor.RED);
+		XiangqiPieceImpl redSoldier = XiangqiPieceImpl.makePiece(XiangqiPieceType.SOLDIER, XiangqiColor.RED, soldierRules);
+		XiangqiPieceImpl redAdvisorLeft = XiangqiPieceImpl.makePiece(XiangqiPieceType.ADVISOR, XiangqiColor.RED);
+		XiangqiPieceImpl redAdvisorRight = XiangqiPieceImpl.makePiece(XiangqiPieceType.ADVISOR, XiangqiColor.RED);
+		XiangqiPieceImpl redChariotLeft = XiangqiPieceImpl.makePiece(XiangqiPieceType.CHARIOT, XiangqiColor.RED, chariotRules);
+		XiangqiPieceImpl redChariotRight = XiangqiPieceImpl.makePiece(XiangqiPieceType.CHARIOT, XiangqiColor.RED, chariotRules);		
 		
 		// black pieces
-		XiangqiPiece blackGeneral = XiangqiPieceImpl.makePiece(XiangqiPieceType.GENERAL, XiangqiColor.BLACK);
-		XiangqiPiece blackSoldier = XiangqiPieceImpl.makePiece(XiangqiPieceType.SOLDIER, XiangqiColor.BLACK);
-		XiangqiPiece blackAdvisorLeft = XiangqiPieceImpl.makePiece(XiangqiPieceType.ADVISOR, XiangqiColor.BLACK);
-		XiangqiPiece blackAdvisorRight = XiangqiPieceImpl.makePiece(XiangqiPieceType.ADVISOR, XiangqiColor.BLACK);
-		XiangqiPiece blackChariotLeft = XiangqiPieceImpl.makePiece(XiangqiPieceType.CHARIOT, XiangqiColor.BLACK);
-		XiangqiPiece blackChariotRight = XiangqiPieceImpl.makePiece(XiangqiPieceType.CHARIOT, XiangqiColor.BLACK);	
+		XiangqiPieceImpl blackGeneral = XiangqiPieceImpl.makePiece(XiangqiPieceType.GENERAL, XiangqiColor.BLACK);
+		XiangqiPieceImpl blackSoldier = XiangqiPieceImpl.makePiece(XiangqiPieceType.SOLDIER, XiangqiColor.BLACK, soldierRules);
+		XiangqiPieceImpl blackAdvisorLeft = XiangqiPieceImpl.makePiece(XiangqiPieceType.ADVISOR, XiangqiColor.BLACK);
+		XiangqiPieceImpl blackAdvisorRight = XiangqiPieceImpl.makePiece(XiangqiPieceType.ADVISOR, XiangqiColor.BLACK);
+		XiangqiPieceImpl blackChariotLeft = XiangqiPieceImpl.makePiece(XiangqiPieceType.CHARIOT, XiangqiColor.BLACK, chariotRules);
+		XiangqiPieceImpl blackChariotRight = XiangqiPieceImpl.makePiece(XiangqiPieceType.CHARIOT, XiangqiColor.BLACK, chariotRules);	
 		
 		board.putPiece(XiangqiCoordinateImpl.makeCoordinate(1, 3), redGeneral, XiangqiColor.RED);
 		board.putPiece(XiangqiCoordinateImpl.makeCoordinate(2, 3), redSoldier, XiangqiColor.RED);

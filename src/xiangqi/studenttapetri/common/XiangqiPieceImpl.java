@@ -4,6 +4,7 @@
 package xiangqi.studenttapetri.common;
 
 import xiangqi.common.XiangqiColor;
+import xiangqi.common.XiangqiCoordinate;
 import xiangqi.common.XiangqiPiece;
 import xiangqi.common.XiangqiPieceType;
 
@@ -19,16 +20,23 @@ public class XiangqiPieceImpl implements XiangqiPiece
 	
 	private final XiangqiColor color;
 	private final XiangqiPieceType pieceType;
+	private final MoveValidator moveValidator;
 	
-	public static XiangqiPiece makePiece(XiangqiPieceType pieceType, XiangqiColor color)
+	public static XiangqiPieceImpl makePiece(XiangqiPieceType pieceType, XiangqiColor color)
 	{
-		return new XiangqiPieceImpl(pieceType, color);
+		return new XiangqiPieceImpl(pieceType, color, null);
 	}
 	
-	private XiangqiPieceImpl(XiangqiPieceType pieceType, XiangqiColor color)
+	public static XiangqiPieceImpl makePiece(XiangqiPieceType pieceType, XiangqiColor color, MoveValidator mv)
+	{
+		return new XiangqiPieceImpl(pieceType, color, mv);
+	}
+	
+	private XiangqiPieceImpl(XiangqiPieceType pieceType, XiangqiColor color, MoveValidator mv)
 	{
 		this.pieceType = pieceType;
 		this.color = color;
+		this.moveValidator = mv;
 	}
 
 	/* (non-Javadoc)
@@ -47,6 +55,11 @@ public class XiangqiPieceImpl implements XiangqiPiece
 	public XiangqiPieceType getPieceType()
 	{
 		return pieceType;
+	}
+	
+	public boolean isValidMove(XiangqiCoordinate source, XiangqiCoordinate destination) {
+		
+		return moveValidator.isValid(source, destination, this);
 	}
 
 }
