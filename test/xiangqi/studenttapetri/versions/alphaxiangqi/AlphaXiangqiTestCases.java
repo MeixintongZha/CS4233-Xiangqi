@@ -1,4 +1,4 @@
-package xiangqi.studenttapetri.versions.alphaxianqi;
+package xiangqi.studenttapetri.versions.alphaxiangqi;
 
 
 import static org.junit.Assert.*;
