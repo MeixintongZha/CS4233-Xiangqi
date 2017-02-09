@@ -30,41 +30,44 @@ public class BetaXiangqiBoard
 	
 	private XiangqiColor normal = XiangqiColor.RED;
 	
+	private XiangqiCoordinate redGeneral;
+	private XiangqiCoordinate blackGeneral;
+	
 	private Map<XiangqiCoordinateImpl, XiangqiPieceImpl> board;
+	private Map<XiangqiPieceImpl, XiangqiCoordinateImpl> activeCoordinates;
 	
 	BetaXiangqiBoard() {
 		
 		board = new HashMap<>();
-		// System.out.println("Beta board constructed");
 	}
-	
-	// TODO: type of piece?
+
 	public void putPiece(XiangqiCoordinate where, XiangqiPieceImpl piece, XiangqiColor aspect)
 	{
-		
 		XiangqiCoordinateImpl loc = normalizeCoordinate(where, aspect);
-		// System.out.println("Normalized " + loc.getRank() + ", " + loc.getFile());
-		board.put(loc, piece);
+		board.put(loc, piece);	
 		
+		if (piece.getPieceType() == XiangqiPieceType.GENERAL) {
+			
+			if (piece.getColor() == XiangqiColor.RED) 
+				redGeneral = loc;
+			else 
+				blackGeneral = loc;
+		}
 	}
 	
 	public XiangqiPieceImpl getPieceAt(XiangqiCoordinate where, XiangqiColor aspect)
 	{
-		
 		// normalize coordinate
 		XiangqiCoordinateImpl loc = normalizeCoordinate(where, aspect);
 		
 		if (board.get(loc) == null) {
 			return XiangqiPieceImpl.makePiece(XiangqiPieceType.NONE, XiangqiColor.NONE);
 		}
-		
-		// TODO: should probably not return actual reference
 		return board.get(loc);
 	}
 	
 	public boolean isValidCoordinate(XiangqiCoordinate source)
 	{
-		
 		int rank = source.getRank();
 		int file = source.getFile();
 	
@@ -80,7 +83,6 @@ public class BetaXiangqiBoard
 		int normalizedFile = FILES - coord.getFile() + 1;
 
 		return new XiangqiCoordinateImpl(normalizedRank, normalizedFile);
-
 	}
 
 	public void movePiece(XiangqiCoordinate source, XiangqiCoordinate destination, XiangqiColor aspect)
@@ -95,5 +97,26 @@ public class BetaXiangqiBoard
 		
 		return;
 		
+	}
+	
+	public void printBoard() 
+	{	
+		String s = "";
+		
+		for (int r = RANKS; r > 0; r--) {
+			for (int f = 1; f <= FILES; f++) {
+				XiangqiCoordinateImpl c = new XiangqiCoordinateImpl(r, f);
+				if (board.get(c) == null)
+					s += "[  ]";
+				else {
+					s += "[";
+					s += (board.get(c).getColor() == XiangqiColor.RED) ? "r" : "b";
+					s += board.get(c).getPieceType().getSymbol();
+					s += "]";
+				}
+			}
+			s+= "\n";
+		}
+		System.out.println(s);
 	}
 }

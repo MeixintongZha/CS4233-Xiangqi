@@ -30,12 +30,13 @@ public class BetaXiangqiGame implements XiangqiGame
 	private static String messageInvalidCoordinates = "The provided coordinates were invalid";
 	private static String messageNoPieceAtProvidedSource = "There is no piece at the provided source coordinate";
 	private static String messageNotAllowedToMovePiece = "The player can not move this piece";
+	private static String messageMoveNotValidForPiece = "The given move was not valid for this piece";
 	
 	
 	private static XiangqiColor STARTING_COLOR = XiangqiColor.RED;
 	private static int MAX_MOVES = 10;
 	
-	private int moveCount;
+	private int roundCount;
 	private String lastMoveMessage;
 	private XiangqiColor activeColor;
 	
@@ -44,7 +45,7 @@ public class BetaXiangqiGame implements XiangqiGame
 	
 	public BetaXiangqiGame()
 	{
-		moveCount = 0;
+		roundCount = 0;
 		lastMoveMessage = "";
 		
 		activeColor = STARTING_COLOR;
@@ -80,18 +81,26 @@ public class BetaXiangqiGame implements XiangqiGame
 		
 		// is move valid (piece it self can figure this out using board, src, dest)
 		if (!board.getPieceAt(source, activeColor).isValidMove(source, destination)) {
-			// set message
+			setMoveMessage(messageMoveNotValidForPiece);
 			return MoveResult.ILLEGAL;
 		}
 		
 		// move piece to location (replace what ever is there)
 		board.movePiece(source, destination, activeColor);
 		
-		// check for game winning conditions
+//		// check for game winning conditions
+//		if (board.isOppositeGeneralCaptured(activeColor) || board.isOppositeGeneralInCheckMate(activeColor)) {
+//			setMoveMessage("win");
+//			
+//		
+//		}
 		
 		// check for movecount
-		moveCount++;
 		activeColor = (activeColor == XiangqiColor.RED) ? XiangqiColor.BLACK : XiangqiColor.RED;
+		roundCount += (activeColor == XiangqiColor.BLACK) ? 1 : 0;
+		
+		// check if game is over
+		if (roundCount == 10) return MoveResult.DRAW;
 		
 		return MoveResult.OK;
 	}
@@ -119,6 +128,11 @@ public class BetaXiangqiGame implements XiangqiGame
 		return board.getPieceAt(where, aspect);
 	}
 	
+	public void printBoard() 
+	{
+		board.printBoard();
+	}
+	
 	// TODO: call initializeGame?
 	private void placeStartingPieces()
 	{
@@ -126,20 +140,22 @@ public class BetaXiangqiGame implements XiangqiGame
 		// move rules
 		MoveValidator soldierRules = new SoldierMoveValidator(board);
 		MoveValidator chariotRules = new ChariotMoveValidator(board);
+		MoveValidator advisorRules = new AdvisorMoveValidator(board);
+		MoveValidator generalRules = new GeneralMoveValidator(board);
 		
 		// red pieces
-		XiangqiPieceImpl redGeneral = XiangqiPieceImpl.makePiece(XiangqiPieceType.GENERAL, XiangqiColor.RED);
+		XiangqiPieceImpl redGeneral = XiangqiPieceImpl.makePiece(XiangqiPieceType.GENERAL, XiangqiColor.RED, generalRules);
 		XiangqiPieceImpl redSoldier = XiangqiPieceImpl.makePiece(XiangqiPieceType.SOLDIER, XiangqiColor.RED, soldierRules);
-		XiangqiPieceImpl redAdvisorLeft = XiangqiPieceImpl.makePiece(XiangqiPieceType.ADVISOR, XiangqiColor.RED);
-		XiangqiPieceImpl redAdvisorRight = XiangqiPieceImpl.makePiece(XiangqiPieceType.ADVISOR, XiangqiColor.RED);
+		XiangqiPieceImpl redAdvisorLeft = XiangqiPieceImpl.makePiece(XiangqiPieceType.ADVISOR, XiangqiColor.RED, advisorRules);
+		XiangqiPieceImpl redAdvisorRight = XiangqiPieceImpl.makePiece(XiangqiPieceType.ADVISOR, XiangqiColor.RED, advisorRules);
 		XiangqiPieceImpl redChariotLeft = XiangqiPieceImpl.makePiece(XiangqiPieceType.CHARIOT, XiangqiColor.RED, chariotRules);
 		XiangqiPieceImpl redChariotRight = XiangqiPieceImpl.makePiece(XiangqiPieceType.CHARIOT, XiangqiColor.RED, chariotRules);		
 		
 		// black pieces
-		XiangqiPieceImpl blackGeneral = XiangqiPieceImpl.makePiece(XiangqiPieceType.GENERAL, XiangqiColor.BLACK);
+		XiangqiPieceImpl blackGeneral = XiangqiPieceImpl.makePiece(XiangqiPieceType.GENERAL, XiangqiColor.BLACK, generalRules);
 		XiangqiPieceImpl blackSoldier = XiangqiPieceImpl.makePiece(XiangqiPieceType.SOLDIER, XiangqiColor.BLACK, soldierRules);
-		XiangqiPieceImpl blackAdvisorLeft = XiangqiPieceImpl.makePiece(XiangqiPieceType.ADVISOR, XiangqiColor.BLACK);
-		XiangqiPieceImpl blackAdvisorRight = XiangqiPieceImpl.makePiece(XiangqiPieceType.ADVISOR, XiangqiColor.BLACK);
+		XiangqiPieceImpl blackAdvisorLeft = XiangqiPieceImpl.makePiece(XiangqiPieceType.ADVISOR, XiangqiColor.BLACK, advisorRules);
+		XiangqiPieceImpl blackAdvisorRight = XiangqiPieceImpl.makePiece(XiangqiPieceType.ADVISOR, XiangqiColor.BLACK, advisorRules);
 		XiangqiPieceImpl blackChariotLeft = XiangqiPieceImpl.makePiece(XiangqiPieceType.CHARIOT, XiangqiColor.BLACK, chariotRules);
 		XiangqiPieceImpl blackChariotRight = XiangqiPieceImpl.makePiece(XiangqiPieceType.CHARIOT, XiangqiColor.BLACK, chariotRules);	
 		
@@ -157,5 +173,4 @@ public class BetaXiangqiGame implements XiangqiGame
 		board.putPiece(XiangqiCoordinateImpl.makeCoordinate(1, 1), blackChariotLeft, XiangqiColor.BLACK);
 		board.putPiece(XiangqiCoordinateImpl.makeCoordinate(1, 5), blackChariotRight, XiangqiColor.BLACK);	
 	}
-
 }

@@ -3,6 +3,7 @@
  */
 package xiangqi.studenttapetri.versions.betaxiangqi;
 
+import xiangqi.common.XiangqiColor;
 import xiangqi.common.XiangqiCoordinate;
 import xiangqi.common.XiangqiPiece;
 import xiangqi.studenttapetri.common.MoveValidator;
@@ -22,6 +23,14 @@ public class SoldierMoveValidator implements MoveValidator
 	@Override
 	public boolean isValid(XiangqiCoordinate source, XiangqiCoordinate destination, XiangqiPiece piece)
 	{
+//		System.out.println("----");
+//		board.printBoard();
+		final XiangqiColor ownColor = piece.getColor();
+//		System.out.println(ownColor + ": " + source.getRank() + ", " + source.getFile());
+//		System.out.println(board.getPieceAt(destination, ownColor).getColor()  + ": " + destination.getRank() + ", " + destination.getFile());
+		// cannot capture own piece
+		if (ownColor == board.getPieceAt(destination, ownColor).getColor()) return false;
+		
 		// soldier is only allowed to move one step forward
 		return (source.getClass() == destination.getClass() &&
 				source.getRank() == destination.getRank()-1);

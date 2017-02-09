@@ -20,11 +20,13 @@ public class BetaXiangqiTestCases
 {
 	
 	private XiangqiGame game;
+	BetaXiangqiGame beta;
 	
 	@Before
 	public void setup()
 	{
 		game = XiangqiGameFactory.makeXiangqiGame(XiangqiGameVersion.BETA_XQ);
+		beta = (BetaXiangqiGame) game;
 	}
 	
 	@Test
@@ -186,6 +188,19 @@ public class BetaXiangqiTestCases
 		assertEquals(MoveResult.ILLEGAL, game.makeMove(makeCoordinate(5,1), makeCoordinate(4,1)));
 	}
 	
+	@Test
+	public void illegalMoveLetsPlayerRetry()
+	{
+		
+		// red tries to make illegal move
+		assertEquals(MoveResult.ILLEGAL, game.makeMove(makeCoordinate(2,3), makeCoordinate(4,3)));
+		
+		// red can then retry
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(2,3), makeCoordinate(3,3)));
+		assertEquals(XiangqiColor.RED, game.getPieceAt(makeCoordinate(3,3),	XiangqiColor.RED).getColor());
+	}
+	
+	
 	@Test 
 	public void soldierCanOnlyMoveOneStepForward()
 	{
@@ -201,20 +216,12 @@ public class BetaXiangqiTestCases
 	}
 	
 	@Test 
-	public void chariotCanMoveVerticallyForward()
+	public void chariotCanMoveVertically()
 	{
 		// one step forward
 		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1)));
 		// three steps forward
 		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,1), makeCoordinate(4,1)));
-	}
-	
-	@Test 
-	public void chariotCanMoveVerticallyBackward()
-	{
-		game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1));
-		game.makeMove(makeCoordinate(1,1), makeCoordinate(4,1));
-		
 		// one step backward
 		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1)));
 		// three steps backward
@@ -224,8 +231,8 @@ public class BetaXiangqiTestCases
 	@Test
 	public void chariotCanMoveHorizontally()
 	{
-		game.makeMove(makeCoordinate(1,1), makeCoordinate(3,1)); // red into position
-		game.makeMove(makeCoordinate(1,1), makeCoordinate(3,1)); // black into position
+		game.makeMove(makeCoordinate(1,1), makeCoordinate(3,1)); // red chariot into position (3,1)
+		game.makeMove(makeCoordinate(1,1), makeCoordinate(3,1)); // black chariot into position (3,1)
 		
 		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(3,1), makeCoordinate(3,2)));
 		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(3,1), makeCoordinate(3,3)));
@@ -233,9 +240,156 @@ public class BetaXiangqiTestCases
 		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(3,3), makeCoordinate(3,1)));
 	}
 	
-	public void chariotCannotOverPiece() {
-		return;
+	@Test
+	public void chariotCannotJumpOverPiece() {
+		
+		game.makeMove(makeCoordinate(1,1), makeCoordinate(3,1)); // red into position
+		game.makeMove(makeCoordinate(2,3), makeCoordinate(3,3)); // black into position
+		assertEquals(MoveResult.ILLEGAL, game.makeMove(makeCoordinate(3,1), makeCoordinate(3,5)));
 	}
-
 	
+	@Test
+	public void advisorCanOnlyMoveOneStepDiagonally() 
+	{	
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,2), makeCoordinate(2,1)));
+		assertEquals(XiangqiPieceType.ADVISOR, game.getPieceAt(makeCoordinate(2,1), XiangqiColor.RED).getPieceType());
+		assertEquals(XiangqiPieceType.NONE, game.getPieceAt(makeCoordinate(1,2), XiangqiColor.RED).getPieceType());
+		
+		
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,4), makeCoordinate(2,5)));
+		assertEquals(XiangqiPieceType.ADVISOR, game.getPieceAt(makeCoordinate(2,5), XiangqiColor.BLACK).getPieceType());
+		
+		assertEquals(MoveResult.ILLEGAL, game.makeMove(makeCoordinate(2,1), makeCoordinate(4,3))); // two steps diagonally is not okay
+	}
+	
+	
+	@Test 
+	public void advisorCannotMoveVertically() 
+	{	
+		assertEquals(MoveResult.ILLEGAL, game.makeMove(makeCoordinate(1,2), makeCoordinate(2,2)));
+	}
+	
+	@Test
+	public void advisorCannotMoveHorizontally()
+	{
+		game.makeMove(makeCoordinate(1,2), makeCoordinate(2,1)); // set up red advisor to be moved
+		game.makeMove(makeCoordinate(2,3), makeCoordinate(3,3)); // black round irrelevant
+		
+		// try to move advisor horizontally
+		assertEquals(MoveResult.ILLEGAL, game.makeMove(makeCoordinate(2,1), makeCoordinate(2,2)));
+	}
+	
+	@Test
+	public void generalCanOnlyMoveOneStepHorizontallyInPalace()
+	{
+		game.makeMove(makeCoordinate(1,1), makeCoordinate(3,1)); // move red chariot left of general out of the way
+		game.makeMove(makeCoordinate(1,5), makeCoordinate(3,5)); // move black chariot right of general out of the way
+		game.makeMove(makeCoordinate(1,2), makeCoordinate(2,1)); // move red advisor left of general out of the way
+		game.makeMove(makeCoordinate(1,4), makeCoordinate(2,5)); // move black advisor right of general out of the way
+
+		
+		// move red general 1 step left
+		System.out.println(game.getPieceAt(makeCoordinate(1,2), XiangqiColor.RED).getColor());
+		System.out.println("Hey");
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,3), makeCoordinate(1,2)));
+		assertEquals(XiangqiPieceType.GENERAL, game.getPieceAt(makeCoordinate(1,2), XiangqiColor.RED).getPieceType());
+		
+		// move black general 1 step right
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,3), makeCoordinate(1,4)));
+		assertEquals(XiangqiPieceType.GENERAL, game.getPieceAt(makeCoordinate(1,4), XiangqiColor.BLACK).getPieceType());	
+		
+		// fail to move red general 2 steps right, forward, and left
+		assertEquals(MoveResult.ILLEGAL, game.makeMove(makeCoordinate(1,2), makeCoordinate(1,4)));
+		assertEquals(MoveResult.ILLEGAL, game.makeMove(makeCoordinate(1,2), makeCoordinate(2,2)));
+		assertEquals(MoveResult.ILLEGAL, game.makeMove(makeCoordinate(1,2), makeCoordinate(1,1)));	
+	}
+	
+	@Test
+	public void chariotCanCapturePiece()
+	{
+		assertEquals(XiangqiColor.BLACK, game.getPieceAt(makeCoordinate(5,1), XiangqiColor.RED).getColor());
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,1), makeCoordinate(5,1)));
+		assertEquals(XiangqiPieceType.CHARIOT, game.getPieceAt(makeCoordinate(5,1), XiangqiColor.RED).getPieceType());
+		assertEquals(XiangqiColor.RED, game.getPieceAt(makeCoordinate(5,1), XiangqiColor.RED).getColor());
+	}
+	
+	@Test
+	public void advisorCanCapturePiece()
+	{
+		game.makeMove(makeCoordinate(1,5), makeCoordinate(4,5));
+		assertEquals(XiangqiColor.RED, game.getPieceAt(makeCoordinate(2,1), XiangqiColor.BLACK).getColor());
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,2), makeCoordinate(2,1)));
+		assertEquals(XiangqiColor.BLACK, game.getPieceAt(makeCoordinate(2,1), XiangqiColor.BLACK).getColor());
+		assertEquals(XiangqiPieceType.ADVISOR, game.getPieceAt(makeCoordinate(2,1), XiangqiColor.BLACK).getPieceType());
+	}
+	
+	@Test
+	public void soldierCanCapturePiece()
+	{
+		game.makeMove(makeCoordinate(2,3), makeCoordinate(3,3));
+		assertEquals(XiangqiColor.RED, game.getPieceAt(makeCoordinate(3,3), XiangqiColor.BLACK).getColor());
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(2,3), makeCoordinate(3,3)));
+		assertEquals(XiangqiColor.BLACK, game.getPieceAt(makeCoordinate(3,3), XiangqiColor.BLACK).getColor());
+	}
+	
+	@Test
+	public void capturingOwnColorPieceIsIllegal() 
+	{
+		// chariot
+		assertEquals(MoveResult.ILLEGAL, game.makeMove(makeCoordinate(1,1), makeCoordinate(1,2)));
+		// general
+		assertEquals(MoveResult.ILLEGAL, game.makeMove(makeCoordinate(1,3), makeCoordinate(1,2)));
+		//advisor
+		assertEquals(MoveResult.ILLEGAL, game.makeMove(makeCoordinate(1,2), makeCoordinate(2,3)));
+		
+		// soldier
+		game.makeMove(makeCoordinate(1,1), makeCoordinate(3,1));
+		game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1)); // black
+		game.makeMove(makeCoordinate(3,1), makeCoordinate(3,3)); // chariot now in front of soldier
+		game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1)); // black
+		assertEquals(MoveResult.ILLEGAL, game.makeMove(makeCoordinate(2,3), makeCoordinate(3,3)));
+	}
+	
+	@Test
+	public void gameEndsInADrawAfter10NonWinningMoves()
+	{
+		game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1));
+		game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1));
+		game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1));
+		game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1));
+		game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1));
+		game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1));
+		game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1));
+		game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1));
+		game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1));
+		game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1));
+		game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1));
+		game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1));
+		game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1));
+		game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1));
+		game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1));
+		game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1));
+		game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1));
+		game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1));
+		game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1));
+		assertEquals(MoveResult.DRAW, game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1)));
+	}
+	
+	@Test 
+	public void capturingBlackGeneralResultsInRedWin()
+	{
+
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(2,3), makeCoordinate(3,3)));
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1)));
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(3,3), makeCoordinate(4,3)));
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1)));
+		assertEquals(MoveResult.RED_WINS, game.makeMove(makeCoordinate(4,3), makeCoordinate(5,3)));
+	}
+	
+	
+	
+	
+	
+	
+
 }

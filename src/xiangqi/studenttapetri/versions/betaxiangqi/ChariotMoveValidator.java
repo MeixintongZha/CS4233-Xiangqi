@@ -1,5 +1,6 @@
 package xiangqi.studenttapetri.versions.betaxiangqi;
 
+import xiangqi.common.XiangqiColor;
 import xiangqi.common.XiangqiCoordinate;
 import xiangqi.common.XiangqiPiece;
 import xiangqi.common.XiangqiPieceType;
@@ -20,16 +21,16 @@ public class ChariotMoveValidator implements MoveValidator
 	public boolean isValid(XiangqiCoordinate source, XiangqiCoordinate destination, XiangqiPiece piece)
 	{
 		
+		final XiangqiColor ownColor = piece.getColor();
 		
-		
+		// cannot capture own piece
+		if (ownColor == board.getPieceAt(destination, ownColor).getColor()) return false;
+	
 		final int sourceRank = source.getRank();
 		final int sourceFile = source.getFile();
 		final int destRank = destination.getRank();
 		final int destFile = destination.getFile();
-		
-//		System.out.println("Source: " + sourceRank + ", " + sourceFile);
-//		System.out.println("Destin: " + destRank + ", " + destFile);
-		
+
 		// if chariot is moving horizontally
 		if (sourceRank == destRank) {
 			
@@ -50,8 +51,6 @@ public class ChariotMoveValidator implements MoveValidator
 			
 			int smallerRank = sourceRank < destRank ? sourceRank : destRank;
 			int largerRank = sourceRank < destRank ? destRank : sourceRank;
-			
-			// System.out.println("walking from " + smallerRank + " to " + largerRank);
 			
 			// check that there is no piece in between source and destination
 			for (int i = smallerRank + 1; i < largerRank; i++) {

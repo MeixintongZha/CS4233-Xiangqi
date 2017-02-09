@@ -29,4 +29,10 @@ public class TestCoordinate implements XiangqiCoordinate
 	{
 		return file;
 	}
+	
+	@Override
+	public String toString() {
+		String result = "(" + getRank() + ", " + getFile() + ")";
+		return result;
+	}
 }
