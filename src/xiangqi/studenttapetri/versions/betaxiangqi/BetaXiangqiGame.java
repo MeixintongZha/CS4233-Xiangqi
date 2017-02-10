@@ -3,9 +3,6 @@
  */
 package xiangqi.studenttapetri.versions.betaxiangqi;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import xiangqi.common.MoveResult;
 import xiangqi.common.XiangqiColor;
 import xiangqi.common.XiangqiCoordinate;
@@ -17,11 +14,10 @@ import xiangqi.studenttapetri.common.*;
 
 
 /**
- * Implementation of the Beta version of Xiangqi.
+ * Implementation of the Beta version of XiangqiGame.
  * 
- * This class handles the messaging of invalid moves, move counts, and overall
- * control of board.
- * @author timpetri
+ * @author Tim Petri
+ * @version Feb 7, 2017
  *
  */
 public class BetaXiangqiGame implements XiangqiGame
@@ -31,21 +27,25 @@ public class BetaXiangqiGame implements XiangqiGame
 	private static String messageNoPieceAtProvidedSource = "There is no piece at the provided source coordinate";
 	private static String messageNotAllowedToMovePiece = "The player can not move this piece";
 	private static String messageMoveNotValidForPiece = "The given move was not valid for this piece";
+	private static String messageGameWon = "The given move resulted in a win.";
+	private static String messageGameDraw = "The given more resulted in a draw.";
+	private static String messageGameAlreadyCompleted = "The game has already been completed.";
 	
 	
 	private static XiangqiColor STARTING_COLOR = XiangqiColor.RED;
-	private static int MAX_MOVES = 10;
+	private static int MAX_ROUNDS = 10;
 	
 	private int roundCount;
+	private boolean gameCompleted;
 	private String lastMoveMessage;
 	private XiangqiColor activeColor;
 	
-	// TODO: change to implementation
 	private BetaXiangqiBoard board;
 	
 	public BetaXiangqiGame()
 	{
-		roundCount = 0;
+		gameCompleted = false;
+		roundCount = 1;
 		lastMoveMessage = "";
 		
 		activeColor = STARTING_COLOR;
@@ -53,56 +53,73 @@ public class BetaXiangqiGame implements XiangqiGame
 		placeStartingPieces();
 	}
 
-
-
 	/* (non-Javadoc)
 	 * @see xiangqi.common.XiangqiGame#makeMove(xiangqi.common.XiangqiCoordinate, xiangqi.common.XiangqiCoordinate)
 	 */
 	@Override
 	public MoveResult makeMove(XiangqiCoordinate source, XiangqiCoordinate destination)
 	{
-		// are coordinates within boounds
-		if (!board.isValidCoordinate(source) || !board.isValidCoordinate(destination)) {
+		
+		System.out.println("Round: " + roundCount + ", Active Color: " + activeColor);
+		System.out.println("Before move: " + source.toString() + "->" + destination.toString());
+		board.printBoard();
+		System.out.println("----");
+		
+		if(gameCompleted) {
+			setMoveMessage(messageGameAlreadyCompleted);
+			return MoveResult.ILLEGAL;
+		}
+		
+		if (!areCoordinatesValid(source, destination)) {
 			setMoveMessage(messageInvalidCoordinates);
 			return MoveResult.ILLEGAL;
 		}
 		
-		// does source have a piece
-		if (board.getPieceAt(source, activeColor).getPieceType() == XiangqiPieceType.NONE) {
+		if (!sourceHasAPiece(source)) {
 			setMoveMessage(messageNoPieceAtProvidedSource);
 			return MoveResult.ILLEGAL;
 		}
 		
-		// is color at source equal to playing color
-		if (board.getPieceAt(source, activeColor).getColor() != activeColor) {
+		if (!sourcePieceMatchesActiveColor(source)) {
 			setMoveMessage(messageNotAllowedToMovePiece);
 			return MoveResult.ILLEGAL;
 		}
 		
-		// is move valid (piece it self can figure this out using board, src, dest)
-		if (!board.getPieceAt(source, activeColor).isValidMove(source, destination)) {
+		if (!moveisValid(source, destination)) {
 			setMoveMessage(messageMoveNotValidForPiece);
 			return MoveResult.ILLEGAL;
 		}
 		
-		// move piece to location (replace what ever is there)
 		board.movePiece(source, destination, activeColor);
 		
-//		// check for game winning conditions
-//		if (board.isOppositeGeneralCaptured(activeColor) || board.isOppositeGeneralInCheckMate(activeColor)) {
-//			setMoveMessage("win");
-//			
-//		
-//		}
-		
-		// check for movecount
-		activeColor = (activeColor == XiangqiColor.RED) ? XiangqiColor.BLACK : XiangqiColor.RED;
-		roundCount += (activeColor == XiangqiColor.BLACK) ? 1 : 0;
+		if (wasGeneralCaptured() || wasGeneralPutInCheckMate()) {
+			
+			setMoveMessage(messageGameWon);
+			gameCompleted = true;
+			return (activeColor == XiangqiColor.RED) ? MoveResult.RED_WINS :
+				MoveResult.BLACK_WINS;
+		}
 		
 		// check if game is over
-		if (roundCount == 10) return MoveResult.DRAW;
+		if (isEndOfFinalRound()) {
+			setMoveMessage(messageGameDraw);
+			gameCompleted = true;
+			return MoveResult.DRAW;
+		}
+		
+		// update round count and active color
+		updateGameStats();
 		
 		return MoveResult.OK;
+	}
+	
+	/* (non-Javadoc)
+	 * @see xiangqi.common.XiangqiGame#getPieceAt(xiangqi.common.XiangqiCoordinate, xiangqi.common.XiangqiColor)
+	 */
+	@Override
+	public XiangqiPiece getPieceAt(XiangqiCoordinate where, XiangqiColor aspect)
+	{
+		return board.getPieceAt(where, aspect);
 	}
 
 	/* (non-Javadoc)
@@ -114,29 +131,65 @@ public class BetaXiangqiGame implements XiangqiGame
 		return lastMoveMessage;
 	}
 	
-	private void setMoveMessage(String msg)
-	{
-		lastMoveMessage = msg;
-	}
-
-	/* (non-Javadoc)
-	 * @see xiangqi.common.XiangqiGame#getPieceAt(xiangqi.common.XiangqiCoordinate, xiangqi.common.XiangqiColor)
-	 */
-	@Override
-	public XiangqiPiece getPieceAt(XiangqiCoordinate where, XiangqiColor aspect)
-	{
-		return board.getPieceAt(where, aspect);
-	}
-	
 	public void printBoard() 
 	{
 		board.printBoard();
 	}
 	
-	// TODO: call initializeGame?
+	private void setMoveMessage(String msg)
+	{
+		lastMoveMessage = msg;
+	}
+	
+	private XiangqiColor opponentColor()
+	{
+		return (activeColor == XiangqiColor.RED) ? XiangqiColor.BLACK : XiangqiColor.RED;
+	}	
+	
+	private boolean wasGeneralPutInCheckMate()
+	{
+		return board.isGeneralInCheckMate(opponentColor());
+	}
+
+	private boolean wasGeneralCaptured()
+	{
+		return board.isGeneralCaptured(opponentColor());
+	}
+
+	private boolean moveisValid(XiangqiCoordinate source, XiangqiCoordinate destination)
+	{
+		return board.getPieceAt(source, activeColor).isValidMove(source, destination);
+	}
+
+	private boolean sourcePieceMatchesActiveColor(XiangqiCoordinate source)
+	{
+		return board.getPieceAt(source, activeColor).getColor() == activeColor;
+	}
+
+	private boolean sourceHasAPiece(XiangqiCoordinate source)
+	{
+		return board.getPieceAt(source, activeColor).getPieceType() != XiangqiPieceType.NONE;
+	}
+
+	private boolean areCoordinatesValid(XiangqiCoordinate source, XiangqiCoordinate destination)
+	{
+		return board.isValidCoordinate(source) && board.isValidCoordinate(destination);
+	}
+
+	private boolean isEndOfFinalRound()
+	{
+		return (roundCount >= MAX_ROUNDS && activeColor != STARTING_COLOR);
+	}
+
+	private void updateGameStats()
+	{
+		roundCount += (activeColor == STARTING_COLOR) ? 0 : 1;	
+		activeColor = opponentColor();
+	}
+	
+	// Initializes the game with pieces according to game manual.
 	private void placeStartingPieces()
 	{
-		
 		// move rules
 		MoveValidator soldierRules = new SoldierMoveValidator(board);
 		MoveValidator chariotRules = new ChariotMoveValidator(board);

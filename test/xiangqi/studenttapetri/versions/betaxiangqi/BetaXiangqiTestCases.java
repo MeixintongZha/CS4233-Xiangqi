@@ -287,15 +287,18 @@ public class BetaXiangqiTestCases
 		game.makeMove(makeCoordinate(1,2), makeCoordinate(2,1)); // move red advisor left of general out of the way
 		game.makeMove(makeCoordinate(1,4), makeCoordinate(2,5)); // move black advisor right of general out of the way
 
+		beta.printBoard();
 		
 		// move red general 1 step left
 		System.out.println(game.getPieceAt(makeCoordinate(1,2), XiangqiColor.RED).getColor());
-		System.out.println("Hey");
+		//
 		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,3), makeCoordinate(1,2)));
 		assertEquals(XiangqiPieceType.GENERAL, game.getPieceAt(makeCoordinate(1,2), XiangqiColor.RED).getPieceType());
 		
+		beta.printBoard();
 		// move black general 1 step right
 		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,3), makeCoordinate(1,4)));
+		// System.out.println(game.getMoveMessage());
 		assertEquals(XiangqiPieceType.GENERAL, game.getPieceAt(makeCoordinate(1,4), XiangqiColor.BLACK).getPieceType());	
 		
 		// fail to move red general 2 steps right, forward, and left
@@ -351,45 +354,81 @@ public class BetaXiangqiTestCases
 	}
 	
 	@Test
-	public void gameEndsInADrawAfter10NonWinningMoves()
+	public void gameEndsInADrawAfter10NonWinningRounds()
 	{
-		game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1));
-		game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1));
-		game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1));
-		game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1));
-		game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1));
-		game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1));
-		game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1));
-		game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1));
-		game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1));
-		game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1));
-		game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1));
-		game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1));
-		game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1));
-		game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1));
-		game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1));
-		game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1));
-		game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1));
-		game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1));
-		game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1));
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1)));
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1)));
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1)));
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1)));
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1)));
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1)));
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1)));
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1)));
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1)));
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1)));
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1)));
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1)));
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1)));
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1)));
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1)));
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1)));
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1)));
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1)));
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1)));
 		assertEquals(MoveResult.DRAW, game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1)));
 	}
 	
 	@Test 
 	public void capturingBlackGeneralResultsInRedWin()
 	{
-
 		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(2,3), makeCoordinate(3,3)));
-		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1)));
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,1), makeCoordinate(3,1)));
 		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(3,3), makeCoordinate(4,3)));
-		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1)));
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(3,1), makeCoordinate(1,1)));
 		assertEquals(MoveResult.RED_WINS, game.makeMove(makeCoordinate(4,3), makeCoordinate(5,3)));
 	}
 	
+	@Test 
+	public void capturingRedGeneralResultsInBlackWin()
+	{
+		game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1));
+		game.makeMove(makeCoordinate(2,3), makeCoordinate(3,3));
+		game.makeMove(makeCoordinate(2,1), makeCoordinate(1,1));
+		game.makeMove(makeCoordinate(3,3), makeCoordinate(4,3));
+		game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1));
+		assertEquals(MoveResult.BLACK_WINS, game.makeMove(makeCoordinate(4,3), makeCoordinate(5,3)));
+	}
 	
+	@Test
+	public void checkMateResultsInAWin()
+	{
+		game.makeMove(makeCoordinate(1,1), makeCoordinate(5,1));
+		game.makeMove(makeCoordinate(2,3), makeCoordinate(3,3));
+		game.makeMove(makeCoordinate(5,1), makeCoordinate(4,1));
+		game.makeMove(makeCoordinate(1,4), makeCoordinate(2,3));
+		game.makeMove(makeCoordinate(4,1), makeCoordinate(3,1));
+		game.makeMove(makeCoordinate(2,3), makeCoordinate(3,4));
+		assertEquals(MoveResult.RED_WINS, game.makeMove(makeCoordinate(3,1), makeCoordinate(5,1)));
+	}
 	
+	@Test
+	public void generalCanCaptureHisWayOutOfCheck()
+	{
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,1), makeCoordinate(5,1)));
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1)));
+		System.out.println(game.getMoveMessage());
+		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(5,1), makeCoordinate(5,2)));
+		System.out.println(game.getMoveMessage());
+	}
 	
-	
-	
+	@Test
+	public void generalCanPerformFlyingGeneralMove()
+	{
+		game.makeMove(makeCoordinate(1,2), makeCoordinate(2,1));
+		game.makeMove(makeCoordinate(1,4), makeCoordinate(2,5));
+		game.makeMove(makeCoordinate(1,3), makeCoordinate(1,2));
+		game.makeMove(makeCoordinate(1,3), makeCoordinate(1,4));
+		assertEquals(MoveResult.RED_WINS, game.makeMove(makeCoordinate(1,2), makeCoordinate(5,2)));
+	}
 
 }

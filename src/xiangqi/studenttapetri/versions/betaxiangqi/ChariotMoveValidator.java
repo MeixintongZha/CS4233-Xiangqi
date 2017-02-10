@@ -7,9 +7,14 @@ import xiangqi.common.XiangqiPieceType;
 import xiangqi.studenttapetri.common.MoveValidator;
 import xiangqi.studenttapetri.common.XiangqiCoordinateImpl;
 
+/**
+ * MoveValidator implementation for validating Chariot moves in Beta Xiangqi.
+ * 
+ * @author Tim Petri
+ * @version Feb 7, 2017
+ */
 public class ChariotMoveValidator implements MoveValidator
 {
-	// context
 	private BetaXiangqiBoard board;
 	
 	public ChariotMoveValidator(BetaXiangqiBoard board)
@@ -17,6 +22,9 @@ public class ChariotMoveValidator implements MoveValidator
 		this.board = board;
 	}
 	
+	/* 
+	 * @see xiangqi.studenttapetri.common.MoveValidator#isValid(xiangqi.common.XiangqiCoordinate, xiangqi.common.XiangqiCoordinate)
+	 */
 	@Override
 	public boolean isValid(XiangqiCoordinate source, XiangqiCoordinate destination, XiangqiPiece piece)
 	{
@@ -54,7 +62,8 @@ public class ChariotMoveValidator implements MoveValidator
 			
 			// check that there is no piece in between source and destination
 			for (int i = smallerRank + 1; i < largerRank; i++) {
-				if (board.getPieceAt(XiangqiCoordinateImpl.makeCoordinate(i, sourceRank), 
+
+				if (board.getPieceAt(XiangqiCoordinateImpl.makeCoordinate(i, sourceFile), 
 						piece.getColor()).getPieceType() != XiangqiPieceType.NONE)
 					return false;
 			}

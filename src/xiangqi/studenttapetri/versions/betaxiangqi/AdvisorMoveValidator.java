@@ -9,8 +9,10 @@ import xiangqi.common.XiangqiPiece;
 import xiangqi.studenttapetri.common.MoveValidator;
 
 /**
- * @author timpetri
- * @version 10:29:51 PM
+ * MoveValidator implementation for validating Advisor moves in Beta Xiangqi.
+ * 
+ * @author Tim Petri
+ * @version Feb 7, 2017
  */
 public class AdvisorMoveValidator implements MoveValidator
 {

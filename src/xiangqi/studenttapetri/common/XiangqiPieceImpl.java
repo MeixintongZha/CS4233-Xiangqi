@@ -11,8 +11,12 @@ import xiangqi.common.XiangqiPieceType;
 /**
  * 
  * Data structure for the Xiangqi piece.
+ * 
+ * The piece holds its type and color, as well as the move validator
+ * used to verify any moves the piece is used in.
+ * 
  * @author Tim Petri
- * @version Feb 4, 2017
+ * @version Feb 6, 2017
  *
  */
 public class XiangqiPieceImpl implements XiangqiPiece
@@ -32,6 +36,7 @@ public class XiangqiPieceImpl implements XiangqiPiece
 		return new XiangqiPieceImpl(pieceType, color, mv);
 	}
 	
+	// private constructor
 	private XiangqiPieceImpl(XiangqiPieceType pieceType, XiangqiColor color, MoveValidator mv)
 	{
 		this.pieceType = pieceType;
@@ -57,9 +62,23 @@ public class XiangqiPieceImpl implements XiangqiPiece
 		return pieceType;
 	}
 	
+	/**
+	 * Returns true if the move specified by the given source and destination is valid for this piece, 
+	 * according to the rules specified by its move validator.
+	 * 
+	 * @param source
+	 * @param destination
+	 * @return whether the move is valid
+	 */
 	public boolean isValidMove(XiangqiCoordinate source, XiangqiCoordinate destination) {
 		
 		return moveValidator.isValid(source, destination, this);
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "[" + getColor() + "," + getPieceType() + "]";
 	}
 
 }

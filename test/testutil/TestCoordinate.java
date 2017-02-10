@@ -2,6 +2,11 @@ package testutil;
 
 import xiangqi.common.XiangqiCoordinate;
 
+/**
+ * Simple implementation of the XiangqiCoordinate interface used for testing purposes.
+ * @author Tim Petri	
+ * @version Feb 4, 2017
+ */
 public class TestCoordinate implements XiangqiCoordinate
 {
 	private final int rank;

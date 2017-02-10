@@ -6,9 +6,15 @@ package xiangqi.studenttapetri.common;
 import xiangqi.common.XiangqiCoordinate;
 
 /**
- * Implementation of XiangqiCoordinate interface.
- * @author timpetri
- * @version Feb 8, 2017
+ * Implementation of XiangqiCoordinate interface. 
+ * 
+ * <p>
+ * This class provides a simple way of keeping track of (rank, file) coordinates. It 
+ * implements methods to be used as a key in a hashmap.
+ * </p>
+ * 
+ * @author Tim Petri
+ * @version Feb 6, 2017
  */
 public class XiangqiCoordinateImpl implements XiangqiCoordinate
 {
@@ -16,7 +22,6 @@ public class XiangqiCoordinateImpl implements XiangqiCoordinate
 	private final int rank;
 	private final int file;
 
-	// TODO: really necessary?
 	public static XiangqiCoordinate makeCoordinate(int file, int rank)
 	{
 		return new XiangqiCoordinateImpl(file, rank);
@@ -31,6 +36,30 @@ public class XiangqiCoordinateImpl implements XiangqiCoordinate
 	{
 		this.rank = rank;
 		this.file = file;
+	}
+	
+	/* 
+	 * @see xiangqi.common.XiangqiCoordinate#getRank()
+	 */
+	@Override
+	public int getRank()
+	{
+		return rank;
+	}
+
+	/* 
+	 * @see xiangqi.common.XiangqiCoordinate#getFile()
+	 */
+	@Override
+	public int getFile()
+	{
+		return file;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "(" + getRank() + ", " + getFile() + ")";
 	}
 	
 	@Override
@@ -63,24 +92,6 @@ public class XiangqiCoordinateImpl implements XiangqiCoordinate
 			return false;
 		
 		return true;
-	}
-	
-	/* 
-	 * @see xiangqi.common.XiangqiCoordinate#getRank()
-	 */
-	@Override
-	public int getRank()
-	{
-		return rank;
-	}
-
-	/* 
-	 * @see xiangqi.common.XiangqiCoordinate#getFile()
-	 */
-	@Override
-	public int getFile()
-	{
-		return file;
 	}
 
 }
