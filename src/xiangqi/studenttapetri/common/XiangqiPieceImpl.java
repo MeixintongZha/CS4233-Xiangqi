@@ -74,11 +74,5 @@ public class XiangqiPieceImpl implements XiangqiPiece
 		
 		return moveValidator.isValid(source, destination, this);
 	}
-	
-	@Override
-	public String toString()
-	{
-		return "[" + getColor() + "," + getPieceType() + "]";
-	}
 
 }

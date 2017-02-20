@@ -60,11 +60,6 @@ public class BetaXiangqiGame implements XiangqiGame
 	public MoveResult makeMove(XiangqiCoordinate source, XiangqiCoordinate destination)
 	{
 		
-		System.out.println("Round: " + roundCount + ", Active Color: " + activeColor);
-		System.out.println("Before move: " + source.toString() + "->" + destination.toString());
-		board.printBoard();
-		System.out.println("----");
-		
 		if(gameCompleted) {
 			setMoveMessage(messageGameAlreadyCompleted);
 			return MoveResult.ILLEGAL;
@@ -129,11 +124,6 @@ public class BetaXiangqiGame implements XiangqiGame
 	public String getMoveMessage()
 	{
 		return lastMoveMessage;
-	}
-	
-	public void printBoard() 
-	{
-		board.printBoard();
 	}
 	
 	private void setMoveMessage(String msg)

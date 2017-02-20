@@ -115,31 +115,6 @@ public class BetaXiangqiBoard
 	}
 	
 	/**
-	 * Prints the current state of the board, with pieces identified
-	 * by their color and symbol.
-	 */
-	public void printBoard() 
-	{	
-		String s = "";
-		
-		for (int r = RANKS; r > 0; r--) {
-			for (int f = 1; f <= FILES; f++) {
-				XiangqiCoordinateImpl c = new XiangqiCoordinateImpl(r, f);
-				if (board.get(c) == null)
-					s += "[  ]";
-				else {
-					s += "[";
-					s += (board.get(c).getColor() == XiangqiColor.RED) ? "r" : "b";
-					s += board.get(c).getPieceType().getSymbol();
-					s += "]";
-				}
-			}
-			s+= "\n";
-		}
-		System.out.println(s);
-	}
-	
-	/**
 	 * Returns true if the general with the given color has been captured.
 	 * 
 	 * @param generalColor 
@@ -184,26 +159,21 @@ public class BetaXiangqiBoard
 		{	
 			XiangqiPieceImpl piece = board.get(loc);
 			
-			if (piece.getColor() != generalColor || piece.getPieceType() == XiangqiPieceType.GENERAL) continue; // only interested in same color pieces
+			if (piece.getColor() != generalColor || piece.getPieceType() == XiangqiPieceType.GENERAL) 
+				continue; // only interested in same color pieces that aren't general
 			
 			Set<XiangqiCoordinateImpl> validDestinations = getValidMovesForPiece(piece, loc);
 			
-			System.out.println("Checking if general can be saved by: " + piece.toString() + loc.toString() + " (" + validDestinations.size() + " valids)");
-			
 			for (XiangqiCoordinateImpl to: validDestinations) {
 				
-				// temporarily move general (might involve capturing a piece)
+				// temporarily move piece (might involve capturing a piece)
 				XiangqiPieceImpl temp = board.get(to);
 				board.put(to, piece);
 				board.remove(loc);
 				
 				// see if he is still in check
 				if (!isGeneralThreatened(generalColor))  {
-					System.out.println("Move to " + to.toString() + " saves General");
 					result = true;
-				}
-				else {
-					System.out.println("Move to " + to.toString() + " does not save General");
 				}
 				
 				// revert changes
@@ -228,7 +198,6 @@ public class BetaXiangqiBoard
 		XiangqiPieceImpl general = board.get(generalLocation);
 		
 		Set<XiangqiCoordinateImpl> validDestinations = getValidMovesForPiece(general, generalLocation);
-		System.out.println("General can move to " + validDestinations.size() + " locations.");
 		boolean result = false;
 		
 		for (XiangqiCoordinateImpl to: validDestinations) {
@@ -236,9 +205,7 @@ public class BetaXiangqiBoard
 			// temporarily move general (might involve capturing a piece)
 			XiangqiPieceImpl temp = board.get(to);
 			board.put(to, general);
-			this.printBoard();
 			board.remove(generalLocation);
-			this.printBoard();
 			
 			// see if he is still in check
 			if (!isGeneralThreatened(generalColor))  {
@@ -267,8 +234,7 @@ public class BetaXiangqiBoard
 			XiangqiPieceImpl piece = board.get(loc);	
 			
 			if (piece.getColor() != generalColor && piece.isValidMove(loc, generalLocation)) {
-				
-				System.out.println("Threatened by: " + piece.toString());
+
 				return true;
 				
 			}
@@ -305,7 +271,6 @@ public class BetaXiangqiBoard
 				XiangqiCoordinateImpl normFrom = normalizeCoordinate(loc, piece.getColor());
 				XiangqiCoordinateImpl normTo = normalizeCoordinate(c, piece.getColor());
 				if (piece.isValidMove(normFrom, normTo)) {
-					System.out.println("From " + normFrom.toString() + " -> " + normTo + " is valid.");
 					valid.add(c);
 				}
 			}

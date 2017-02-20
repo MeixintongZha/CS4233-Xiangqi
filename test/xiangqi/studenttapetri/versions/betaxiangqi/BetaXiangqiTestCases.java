@@ -26,7 +26,7 @@ public class BetaXiangqiTestCases
 	public void setup()
 	{
 		game = XiangqiGameFactory.makeXiangqiGame(XiangqiGameVersion.BETA_XQ);
-		beta = (BetaXiangqiGame) game;
+		beta = (BetaXiangqiGame) game; // used for debug
 	}
 	
 	@Test
@@ -287,15 +287,9 @@ public class BetaXiangqiTestCases
 		game.makeMove(makeCoordinate(1,2), makeCoordinate(2,1)); // move red advisor left of general out of the way
 		game.makeMove(makeCoordinate(1,4), makeCoordinate(2,5)); // move black advisor right of general out of the way
 
-		beta.printBoard();
-		
-		// move red general 1 step left
-		System.out.println(game.getPieceAt(makeCoordinate(1,2), XiangqiColor.RED).getColor());
-		//
 		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,3), makeCoordinate(1,2)));
 		assertEquals(XiangqiPieceType.GENERAL, game.getPieceAt(makeCoordinate(1,2), XiangqiColor.RED).getPieceType());
-		
-		beta.printBoard();
+
 		// move black general 1 step right
 		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,3), makeCoordinate(1,4)));
 		// System.out.println(game.getMoveMessage());
@@ -416,9 +410,7 @@ public class BetaXiangqiTestCases
 	{
 		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,1), makeCoordinate(5,1)));
 		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,1), makeCoordinate(2,1)));
-		System.out.println(game.getMoveMessage());
 		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(5,1), makeCoordinate(5,2)));
-		System.out.println(game.getMoveMessage());
 	}
 	
 	@Test

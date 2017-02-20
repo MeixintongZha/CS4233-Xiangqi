@@ -57,12 +57,6 @@ public class XiangqiCoordinateImpl implements XiangqiCoordinate
 	}
 	
 	@Override
-	public String toString()
-	{
-		return "(" + getRank() + ", " + getFile() + ")";
-	}
-	
-	@Override
 	public  int hashCode()
 	{
 		// computes hash using 31*x + y rule..
