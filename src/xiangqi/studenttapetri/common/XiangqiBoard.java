@@ -1,7 +1,4 @@
-/**
- * 
- */
-package xiangqi.studenttapetri.versions.betaxiangqi;
+package xiangqi.studenttapetri.common;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,25 +12,29 @@ import xiangqi.studenttapetri.common.XiangqiCoordinateImpl;
 import xiangqi.studenttapetri.common.XiangqiPieceImpl;
 
 /**
- * Board that deals with logic involving coordinates and pieces in BetaXiangqi.
+ * Board that deals with logic involving coordinates and pieces in Xiangqi.
  * 
  * This board accepts moves and logic accompanied by an aspect. Internally, it
  * normalizes all coordinates in order to keep track of the absolute positions of 
  * pieces, instead of their aspect positions. 
  * 
  * @author Tim Petri
- * @version Feb 7, 2017
+ * @version Feb 19, 2017
  */
-public class BetaXiangqiBoard
+public class XiangqiBoard
 {
-	private final int FILES = 5;
-	private final int RANKS = 5;
+	private XiangqiColor DEFAULT_NORMAL = XiangqiColor.RED;
 	
-	private XiangqiColor normal = XiangqiColor.RED;
+	private int ranks;
+	private int files;
+	private XiangqiColor normal;
+	
 	private Map<XiangqiCoordinateImpl, XiangqiPieceImpl> board;
 	
-	BetaXiangqiBoard() {
-		
+	public XiangqiBoard(int ranks, int files) {
+		this.ranks = ranks;
+		this.files = files;
+		this.normal = DEFAULT_NORMAL;
 		board = new HashMap<>();
 	}
 
@@ -77,9 +78,11 @@ public class BetaXiangqiBoard
 	{
 		int rank = location.getRank();
 		int file = location.getFile();
+		
+		// System.out.println("(" + rank + ", " +  file + ")");
 	
-		return (rank >= 1 && rank <= RANKS && 
-				file >= 1 && file <= FILES);
+		return (rank >= 1 && rank <= this.ranks && 
+				file >= 1 && file <= this.files);
 	}
 
 	/**
@@ -108,8 +111,8 @@ public class BetaXiangqiBoard
 	{
 		if (aspect == normal) return new XiangqiCoordinateImpl(coord);
 
-		int normalizedRank = RANKS - coord.getRank() + 1;
-		int normalizedFile = FILES - coord.getFile() + 1;
+		int normalizedRank = this.ranks - coord.getRank() + 1;
+		int normalizedFile = this.files - coord.getFile() + 1;
 
 		return new XiangqiCoordinateImpl(normalizedRank, normalizedFile);
 	}
@@ -127,7 +130,6 @@ public class BetaXiangqiBoard
 
 	/**
 	 * Returns true if the general with the given color is in check mate.
-	 * 
 	 * @param generalColor
 	 * @return whether the general is in check mate
 	 */
@@ -283,8 +285,8 @@ public class BetaXiangqiBoard
 	{
 		Set<XiangqiCoordinateImpl> all = new HashSet<>();
 		
-		for (int r = RANKS; r > 0; r--) {
-			for (int f = 1; f <= FILES; f++) {
+		for (int r = this.ranks; r > 0; r--) {
+			for (int f = 1; f <= this.files; f++) {
 				all.add(new XiangqiCoordinateImpl(r, f));	
 			}
 		}

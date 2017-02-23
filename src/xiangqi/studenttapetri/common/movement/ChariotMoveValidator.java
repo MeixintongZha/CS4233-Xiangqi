@@ -1,23 +1,23 @@
-package xiangqi.studenttapetri.versions.betaxiangqi;
+package xiangqi.studenttapetri.common.movement;
 
 import xiangqi.common.XiangqiColor;
 import xiangqi.common.XiangqiCoordinate;
 import xiangqi.common.XiangqiPiece;
 import xiangqi.common.XiangqiPieceType;
-import xiangqi.studenttapetri.common.MoveValidator;
+import xiangqi.studenttapetri.common.XiangqiBoard;
 import xiangqi.studenttapetri.common.XiangqiCoordinateImpl;
 
 /**
- * MoveValidator implementation for validating Chariot moves in Beta Xiangqi.
+ * MoveValidator implementation for validating Chariot moves in Gamma Xiangqi.
  * 
  * @author Tim Petri
- * @version Feb 7, 2017
+ * @version Feb 19, 2017
  */
 public class ChariotMoveValidator implements MoveValidator
 {
-	private BetaXiangqiBoard board;
+	private XiangqiBoard board;
 	
-	public ChariotMoveValidator(BetaXiangqiBoard board)
+	public ChariotMoveValidator(XiangqiBoard board)
 	{
 		this.board = board;
 	}

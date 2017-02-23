@@ -7,6 +7,7 @@ import xiangqi.common.XiangqiColor;
 import xiangqi.common.XiangqiCoordinate;
 import xiangqi.common.XiangqiPiece;
 import xiangqi.common.XiangqiPieceType;
+import xiangqi.studenttapetri.common.movement.MoveValidator;
 
 /**
  * 

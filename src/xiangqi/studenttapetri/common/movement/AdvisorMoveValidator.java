@@ -1,23 +1,20 @@
-/**
- * 
- */
-package xiangqi.studenttapetri.versions.betaxiangqi;
+package xiangqi.studenttapetri.common.movement;
 
 import xiangqi.common.XiangqiColor;
 import xiangqi.common.XiangqiCoordinate;
 import xiangqi.common.XiangqiPiece;
-import xiangqi.studenttapetri.common.MoveValidator;
+import xiangqi.studenttapetri.common.XiangqiBoard;
 
 /**
- * MoveValidator implementation for validating Advisor moves in Beta Xiangqi.
+ * This class contains the logic used for verifying that an Advisor piece moves correctly.
  * 
  * @author Tim Petri
- * @version Feb 7, 2017
+ * @version Feb 20, 2017
  */
 public class AdvisorMoveValidator implements MoveValidator
 {
 	
-	private BetaXiangqiBoard board;
+	private XiangqiBoard board;
 
 	/* 
 	 * @see xiangqi.studenttapetri.common.MoveValidator#isValid(xiangqi.common.XiangqiCoordinate, xiangqi.common.XiangqiCoordinate, xiangqi.common.XiangqiPiece)
@@ -25,7 +22,6 @@ public class AdvisorMoveValidator implements MoveValidator
 	@Override
 	public boolean isValid(XiangqiCoordinate source, XiangqiCoordinate destination, XiangqiPiece piece)
 	{
-		
 		final XiangqiColor ownColor = piece.getColor();
 		
 		// cannot capture own piece
@@ -36,20 +32,26 @@ public class AdvisorMoveValidator implements MoveValidator
 		final int destRank = destination.getRank();
 		final int destFile = destination.getFile();
 		
+		// may not leave palace
+		if (destRank > 3 || destFile < 4 || destFile > 6) {
+			return false;
+		}
+		
 		final int dr = 0;
 		final int df = 1;
-		final int dirs[][] = new int[][] {{1,-1}, {1,1}, {-1,1}, {-1,1}};
+		final int dirs[][] = new int[][] {{1,-1}, {1,1}, {-1,1}, {-1,-1}};
 		
 		// loop through diagonals of source and see if they match destinations
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++) {
 			if ( (sourceRank + dirs[i][dr] == destRank) && 
 					(sourceFile + dirs[i][df] == destFile)) 
 				return true;
-		
+		}
+			
 		return false;
 	}
 	
-	public AdvisorMoveValidator(BetaXiangqiBoard board) 
+	public AdvisorMoveValidator(XiangqiBoard board) 
 	{
 		this.board = board;
 	}

@@ -15,6 +15,7 @@ package xiangqi;
 import xiangqi.common.*;
 import xiangqi.studenttapetri.versions.alphaxiangqi.AlphaXiangqiGame;
 import xiangqi.studenttapetri.versions.betaxiangqi.BetaXiangqiGame;
+import xiangqi.studenttapetri.versions.gammaxiangqi.GammaXiangqiGame;
 
 /**
  * A simple factory object that creates the appropriate instance of a XiangqiGame.
@@ -29,16 +30,27 @@ public class XiangqiGameFactory
 	 */
 	public static XiangqiGame makeXiangqiGame(XiangqiGameVersion version)
 	{
+		XiangqiGame game = null;
 		
 		switch(version) {
 			
 			case ALPHA_XQ:
-				return new AlphaXiangqiGame();
+				game = new AlphaXiangqiGame();
+				break;
+				
 			case BETA_XQ:
-				return new BetaXiangqiGame();
+				game = new BetaXiangqiGame();
+				break;
+				
+			case GAMMA_XQ:
+				game = new GammaXiangqiGame();
+				break;
+				
+			default:
+				break;
 		}
 		
-		return null;
+		return game;
 		
 	}
 }

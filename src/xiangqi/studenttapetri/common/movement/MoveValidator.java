@@ -1,4 +1,4 @@
-package xiangqi.studenttapetri.common;
+package xiangqi.studenttapetri.common.movement;
 
 import xiangqi.common.XiangqiCoordinate;
 import xiangqi.common.XiangqiPiece;

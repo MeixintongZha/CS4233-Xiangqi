@@ -12,7 +12,7 @@ public class TestCoordinate implements XiangqiCoordinate
 	private final int rank;
 	private final int file;
 	
-	private TestCoordinate(int rank, int file)
+	public TestCoordinate(int rank, int file)
 	{
 		this.rank = rank;
 		this.file = file;

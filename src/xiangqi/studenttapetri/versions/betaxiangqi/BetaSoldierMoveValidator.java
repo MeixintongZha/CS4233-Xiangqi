@@ -6,7 +6,8 @@ package xiangqi.studenttapetri.versions.betaxiangqi;
 import xiangqi.common.XiangqiColor;
 import xiangqi.common.XiangqiCoordinate;
 import xiangqi.common.XiangqiPiece;
-import xiangqi.studenttapetri.common.MoveValidator;
+import xiangqi.studenttapetri.common.XiangqiBoard;
+import xiangqi.studenttapetri.common.movement.MoveValidator;
 
 /**
  * MoveValidator implementation for validating Soldier moves in Beta Xiangqi.
@@ -14,11 +15,11 @@ import xiangqi.studenttapetri.common.MoveValidator;
  * @author Tim Petri
  * @version Feb 7, 2017
  */
-public class SoldierMoveValidator implements MoveValidator
+public class BetaSoldierMoveValidator implements MoveValidator
 {
-	private static BetaXiangqiBoard board;
+	private static XiangqiBoard board;
 
-	public SoldierMoveValidator(BetaXiangqiBoard board) 
+	public BetaSoldierMoveValidator(XiangqiBoard board) 
 	{
 		this.board = board;
 	}
