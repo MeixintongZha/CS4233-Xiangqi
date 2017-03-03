@@ -24,7 +24,7 @@ public class AdvisorMoveValidator implements MoveValidator
 	{
 		final XiangqiColor ownColor = piece.getColor();
 		
-		// cannot capture own piece
+		// may not capture own colored piece
 		if (ownColor == board.getPieceAt(destination, ownColor).getColor()) return false;
 		
 		final int sourceRank = source.getRank();
@@ -37,8 +37,7 @@ public class AdvisorMoveValidator implements MoveValidator
 			return false;
 		}
 		
-		final int dr = 0;
-		final int df = 1;
+		final int dr = 0, df = 1;
 		final int dirs[][] = new int[][] {{1,-1}, {1,1}, {-1,1}, {-1,-1}};
 		
 		// loop through diagonals of source and see if they match destinations

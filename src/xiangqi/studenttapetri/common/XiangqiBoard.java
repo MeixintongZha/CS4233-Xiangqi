@@ -107,6 +107,45 @@ public class XiangqiBoard
 		
 	}
 	
+	/**
+	 * Copies the current state of the board, including all pieces and their positions.
+	 * 
+	 * @return clone of this board
+	 */
+	public XiangqiBoard clone() 
+	{
+		XiangqiBoard clonedBoard = new XiangqiBoard(this.ranks, this.ranks);
+		clonedBoard.board.putAll(this.board);
+		return clonedBoard;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof XiangqiBoard))
+			return false;
+		XiangqiBoard other = (XiangqiBoard) obj;
+		if (board == null) {
+			if (other.board != null)
+				return false;
+		} else if (files != other.files)
+			return false;
+		if (ranks != other.ranks)
+			return false;
+		
+		// all pieces must match
+		for (XiangqiCoordinateImpl xc : getAllValidCoordinates()) {
+			if (this.board.get(xc) != other.board.get(xc))
+				return false;
+		}
+		
+		return true;
+	}
+
 	private XiangqiCoordinateImpl normalizeCoordinate(XiangqiCoordinate coord, XiangqiColor aspect)
 	{
 		if (aspect == normal) return new XiangqiCoordinateImpl(coord);

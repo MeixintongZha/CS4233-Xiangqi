@@ -26,8 +26,10 @@ public class ElephantMoveValidator implements MoveValidator
 	@Override
 	public boolean isValid(XiangqiCoordinate source, XiangqiCoordinate destination, XiangqiPiece piece)
 	{
-		// may not capture own colored piece
+
 		final XiangqiColor ownColor = piece.getColor();
+		
+		// may not capture own colored piece
 		if (ownColor == board.getPieceAt(destination, ownColor).getColor()) return false;
 		
 		// may not cross river
@@ -39,9 +41,7 @@ public class ElephantMoveValidator implements MoveValidator
 		if (Math.abs(deltaRank) != 2 || Math.abs(deltaFile) != 2) return false;
 		
 		// no piece can block elephant
-		int dr, df;
-		dr = (deltaRank > 1) ? 1 : -1; df = (deltaFile > 1) ? 1 : -1;
-		
+		final int dr = (deltaRank > 1) ? 1 : -1, df = (deltaFile > 1) ? 1 : -1;
 		XiangqiCoordinate between = XiangqiCoordinateImpl.makeCoordinate(source.getRank() + dr, source.getFile() + df);
 		if (board.getPieceAt(between, ownColor).getPieceType() != XiangqiPieceType.NONE) return false;
 		

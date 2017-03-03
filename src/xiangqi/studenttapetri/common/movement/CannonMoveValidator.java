@@ -8,72 +8,77 @@ import xiangqi.studenttapetri.common.XiangqiBoard;
 import xiangqi.studenttapetri.common.XiangqiCoordinateImpl;
 
 /**
- * This class contains the logic used for verifying that a Chariot piece moves correctly.
+ * This class contains the logic used for verifying that a Cannon piece moves correctly.
  * 
  * @author Tim Petri
- * @version Feb 19, 2017
+ * @version Mar 2, 2017
  */
-public class ChariotMoveValidator implements MoveValidator
+public class CannonMoveValidator implements MoveValidator
 {
+	
 	private XiangqiBoard board;
-	
-	public ChariotMoveValidator(XiangqiBoard board)
-	{
-		this.board = board;
-	}
-	
+
 	/* 
-	 * @see xiangqi.studenttapetri.common.MoveValidator#isValid(xiangqi.common.XiangqiCoordinate, xiangqi.common.XiangqiCoordinate)
+	 * @see xiangqi.studenttapetri.common.MoveValidator#isValid(xiangqi.common.XiangqiCoordinate, xiangqi.common.XiangqiCoordinate, xiangqi.common.XiangqiPiece)
 	 */
 	@Override
 	public boolean isValid(XiangqiCoordinate source, XiangqiCoordinate destination, XiangqiPiece piece)
 	{
-		
 		final XiangqiColor ownColor = piece.getColor();
 		
 		// may not capture own colored piece
 		if (ownColor == board.getPieceAt(destination, ownColor).getColor()) return false;
-	
+		
 		final int sourceRank = source.getRank();
 		final int sourceFile = source.getFile();
 		final int destRank = destination.getRank();
 		final int destFile = destination.getFile();
-
-		// if chariot is moving horizontally
+		
+		// may only move orthogonally
+		if (!(sourceRank == destRank || sourceFile == destFile)) return false;
+		
+		final boolean isCapturing = board.getPieceAt(destination, ownColor).getPieceType() != XiangqiPieceType.NONE;
+		int numPiecesOnPath = 0;
+		
+		// if cannon is moving horizontally
 		if (sourceRank == destRank) {
 			
 			int smallerFile = sourceFile < destFile ? sourceFile : destFile;
 			int largerFile = sourceFile < destFile ? destFile : sourceFile;
 			
-			// check that there is no piece in between source and destination
+			// count number of pieces between source and destination
 			for (int i = smallerFile + 1; i < largerFile; i++) {
 				if (board.getPieceAt(XiangqiCoordinateImpl.makeCoordinate(sourceRank, i), 
 						piece.getColor()).getPieceType() != XiangqiPieceType.NONE)
-					return false;
+					numPiecesOnPath++;
 			}
-			
-			return true;
+
 		}
-		// if chariot is moving vertically
+		// if cannon is moving vertically
 		else if (sourceFile == destFile) {
 			
 			int smallerRank = sourceRank < destRank ? sourceRank : destRank;
 			int largerRank = sourceRank < destRank ? destRank : sourceRank;
 			
-			// check that there is no piece in between source and destination
+			// count number of pieces between source and destination
 			for (int i = smallerRank + 1; i < largerRank; i++) {
 
 				if (board.getPieceAt(XiangqiCoordinateImpl.makeCoordinate(i, sourceFile), 
 						piece.getColor()).getPieceType() != XiangqiPieceType.NONE)
-					return false;
+					numPiecesOnPath++;
 			}
 			
-			return true;
 		}
 		
-		// diagonal/irregular movement
-		return false;
+		// may only capture if one piece is jumped
+		if (isCapturing) return numPiecesOnPath == 1;
+		
+		return numPiecesOnPath == 0;
 	}
 	
+	public CannonMoveValidator(XiangqiBoard board) 
+	{
+		this.board = board;
+	}
 
 }

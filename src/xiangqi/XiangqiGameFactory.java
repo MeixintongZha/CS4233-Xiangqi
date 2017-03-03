@@ -15,6 +15,7 @@ package xiangqi;
 import xiangqi.common.*;
 import xiangqi.studenttapetri.versions.alphaxiangqi.AlphaXiangqiGame;
 import xiangqi.studenttapetri.versions.betaxiangqi.BetaXiangqiGame;
+import xiangqi.studenttapetri.versions.deltaxiangqi.DeltaXiangqiGame;
 import xiangqi.studenttapetri.versions.gammaxiangqi.GammaXiangqiGame;
 
 /**
@@ -44,6 +45,10 @@ public class XiangqiGameFactory
 				
 			case GAMMA_XQ:
 				game = new GammaXiangqiGame();
+				break;
+				
+			case DELTA_XQ:
+				game = new DeltaXiangqiGame();
 				break;
 				
 			default:

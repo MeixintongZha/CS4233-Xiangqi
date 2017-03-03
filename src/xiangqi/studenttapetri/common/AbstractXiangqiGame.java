@@ -85,7 +85,7 @@ public abstract class AbstractXiangqiGame implements XiangqiGame
 			return MoveResult.ILLEGAL;
 		}
 		
-		if (!moveisValid(source, destination)) {
+		if (!moveIsValid(source, destination)) {
 			setMoveMessage(messageMoveNotValidForPiece);
 			return MoveResult.ILLEGAL;
 		}
@@ -99,6 +99,8 @@ public abstract class AbstractXiangqiGame implements XiangqiGame
 			return (activeColor == XiangqiColor.RED) ? MoveResult.RED_WINS :
 				MoveResult.BLACK_WINS;
 		}
+		
+		
 		
 		// check if game is over
 		if (isEndOfFinalRound()) {
@@ -157,7 +159,7 @@ public abstract class AbstractXiangqiGame implements XiangqiGame
 		return board.isGeneralCaptured(opponentColor());
 	}
 
-	private boolean moveisValid(XiangqiCoordinate source, XiangqiCoordinate destination)
+	private boolean moveIsValid(XiangqiCoordinate source, XiangqiCoordinate destination)
 	{
 		return board.getPieceAt(source, activeColor).isValidMove(source, destination);
 	}

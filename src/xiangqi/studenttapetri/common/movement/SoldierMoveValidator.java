@@ -28,6 +28,8 @@ public class SoldierMoveValidator implements MoveValidator
 	{
 
 		final XiangqiColor ownColor = piece.getColor();
+		
+		// may not capture own colored piece
 		if (ownColor == board.getPieceAt(destination, ownColor).getColor()) return false;
 
 		boolean pastRiver = source.getRank() > 5;
@@ -37,9 +39,8 @@ public class SoldierMoveValidator implements MoveValidator
 			return (source.getFile() == destination.getFile() && destination.getRank() == (source.getRank() + 1));
 		
 		// only allowed to move/capture one step sideways or forward after river
-		else 
-			return (source.getRank() == destination.getRank() && Math.abs(destination.getFile() - source.getFile()) == 1 ||
-					source.getFile() == destination.getFile() && destination.getRank() == (source.getRank() + 1));
+		return (source.getRank() == destination.getRank() && Math.abs(destination.getFile() - source.getFile()) == 1 ||
+				source.getFile() == destination.getFile() && destination.getRank() == (source.getRank() + 1));
 				
 	}
 	

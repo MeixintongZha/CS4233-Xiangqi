@@ -30,10 +30,10 @@ public class GeneralMoveValidator implements MoveValidator
 	{
 		final XiangqiColor ownColor = piece.getColor();
 		
-		// cannot capture own piece
+		// may not capture own colored piece
 		if (ownColor == board.getPieceAt(destination, ownColor).getColor()) return false;
 		
-		// test for flying general case
+		// test for flying general case (used for check/check mate condition)
 		if (board.getPieceAt(destination, ownColor).getPieceType() == XiangqiPieceType.GENERAL
 				 && source.getFile() == destination.getFile()) {
 			
@@ -43,17 +43,15 @@ public class GeneralMoveValidator implements MoveValidator
 						piece.getColor()).getPieceType() != XiangqiPieceType.NONE)
 					return false;
 			}
-			
 			return true;
 		}
 		
 		// may not leave palace
-		// TOOD: be smarter about this (board.getPalaceBoundaries()) make sure its in them
 		if (destination.getRank() > 3 || destination.getFile() < 4 || destination.getFile() > 6) {
 			return false;
 		}
 		
-		// move may only be of length 1
+		// may only move with step length 1
 		return ( (destination.getRank() == source.getRank() && Math.abs(source.getFile() - destination.getFile()) == 1) 
 				|| (destination.getFile() == source.getFile() && Math.abs(source.getRank() - destination.getRank()) == 1));
 	}
