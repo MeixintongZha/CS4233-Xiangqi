@@ -16,13 +16,13 @@ import xiangqi.studenttapetri.common.XiangqiCoordinateImpl;
 public class CannonMoveValidator implements MoveValidator
 {
 	
-	private XiangqiBoard board;
-
+	public CannonMoveValidator() {}
+	
 	/* 
 	 * @see xiangqi.studenttapetri.common.MoveValidator#isValid(xiangqi.common.XiangqiCoordinate, xiangqi.common.XiangqiCoordinate, xiangqi.common.XiangqiPiece)
 	 */
 	@Override
-	public boolean isValid(XiangqiCoordinate source, XiangqiCoordinate destination, XiangqiPiece piece)
+	public boolean isValid(XiangqiBoard board, XiangqiCoordinate source, XiangqiCoordinate destination, XiangqiPiece piece)
 	{
 		final XiangqiColor ownColor = piece.getColor();
 		
@@ -69,16 +69,11 @@ public class CannonMoveValidator implements MoveValidator
 			}
 			
 		}
-		
 		// may only capture if one piece is jumped
 		if (isCapturing) return numPiecesOnPath == 1;
 		
+
 		return numPiecesOnPath == 0;
-	}
-	
-	public CannonMoveValidator(XiangqiBoard board) 
-	{
-		this.board = board;
 	}
 
 }

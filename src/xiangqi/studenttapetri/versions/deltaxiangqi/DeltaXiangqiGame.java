@@ -3,6 +3,8 @@ package xiangqi.studenttapetri.versions.deltaxiangqi;
 import static xiangqi.studenttapetri.common.XiangqiCoordinateImpl.makeCoordinate;
 import static xiangqi.studenttapetri.common.XiangqiPieceImpl.makePiece;
 
+import java.util.ArrayDeque;
+import java.util.Queue;
 import java.util.concurrent.CompletionException;
 
 import xiangqi.common.MoveResult;
@@ -24,6 +26,12 @@ import xiangqi.studenttapetri.common.movement.MoveValidator;
 import xiangqi.studenttapetri.common.movement.SoldierMoveValidator;
 import xiangqi.studenttapetri.versions.gammaxiangqi.AlwaysValidMoveValidator;
 
+/**
+ * Implementation of the Delta version of XiangqiGame.
+ * 
+ * @author Tim Petri
+ * @version Mar 2, 2017
+ */
 public class DeltaXiangqiGame extends AbstractXiangqiGame
 {
 
@@ -58,13 +66,13 @@ public class DeltaXiangqiGame extends AbstractXiangqiGame
 	@Override
 	protected void placeStartingPieces()
 	{
-		MoveValidator chariotMovementRules = new ChariotMoveValidator(this.board);
-		MoveValidator advisorMovementRules = new AdvisorMoveValidator(this.board);
-		MoveValidator generalMovementRules = new GeneralMoveValidator(this.board);
-		MoveValidator soliderMovementRules = new SoldierMoveValidator(this.board);
-		MoveValidator elephantMovementRules = new ElephantMoveValidator(this.board);
-		MoveValidator cannonMovementRules = new CannonMoveValidator(this.board);
-		MoveValidator horseMoveMentRules = new HorseMoveValidator(this.board);
+		MoveValidator chariotMovementRules = new ChariotMoveValidator();
+		MoveValidator advisorMovementRules = new AdvisorMoveValidator();
+		MoveValidator generalMovementRules = new GeneralMoveValidator();
+		MoveValidator soliderMovementRules = new SoldierMoveValidator();
+		MoveValidator elephantMovementRules = new ElephantMoveValidator();
+		MoveValidator cannonMovementRules = new CannonMoveValidator();
+		MoveValidator horseMoveMentRules = new HorseMoveValidator();
 		
 		// red pieces
 		XiangqiPieceImpl redGeneral = makePiece(XiangqiPieceType.GENERAL, XiangqiColor.RED, generalMovementRules);

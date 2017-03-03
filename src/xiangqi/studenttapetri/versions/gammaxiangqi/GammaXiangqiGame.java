@@ -63,11 +63,11 @@ public class GammaXiangqiGame extends AbstractXiangqiGame
 	@Override
 	protected void placeStartingPieces()
 	{
-		MoveValidator chariotMovementRules = new ChariotMoveValidator(this.board);
-		MoveValidator advisorMovementRules = new AdvisorMoveValidator(this.board);
-		MoveValidator generalMovementRules = new GeneralMoveValidator(this.board);
-		MoveValidator soliderMovementRules = new SoldierMoveValidator(this.board);
-		MoveValidator elephantMovementRules = new ElephantMoveValidator(this.board);
+		MoveValidator chariotMovementRules = new ChariotMoveValidator();
+		MoveValidator advisorMovementRules = new AdvisorMoveValidator();
+		MoveValidator generalMovementRules = new GeneralMoveValidator();
+		MoveValidator soliderMovementRules = new SoldierMoveValidator();
+		MoveValidator elephantMovementRules = new ElephantMoveValidator();
 		
 		// red pieces
 		XiangqiPieceImpl redGeneral = makePiece(XiangqiPieceType.GENERAL, XiangqiColor.RED, generalMovementRules);
@@ -111,6 +111,12 @@ public class GammaXiangqiGame extends AbstractXiangqiGame
 		board.putPiece(makeCoordinate(4, 7), blackSoldier, XiangqiColor.BLACK);
 		board.putPiece(makeCoordinate(4, 9), blackSoldier, XiangqiColor.BLACK);
 	}
+	
+	@Override
+	protected boolean repetitionOccured() { return false; } // gamma does not check for perpetual states
+	
+	@Override
+	protected boolean isOwnGeneralInCheck() { return false; } // games allows generals to be in check
 	
 	// used for debug
 	public XiangqiBoard getBoard() {

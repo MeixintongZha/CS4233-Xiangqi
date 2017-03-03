@@ -15,18 +15,14 @@ import xiangqi.studenttapetri.common.XiangqiCoordinateImpl;
  */
 public class GeneralMoveValidator implements MoveValidator
 {
-	private XiangqiBoard board;
 
-	public GeneralMoveValidator(XiangqiBoard board)
-	{
-		this.board = board;
-	}
+	public GeneralMoveValidator() {}
 
 	/* 
 	 * @see xiangqi.studenttapetri.common.MoveValidator#isValid(xiangqi.common.XiangqiCoordinate, xiangqi.common.XiangqiCoordinate)
 	 */
 	@Override
-	public boolean isValid(XiangqiCoordinate source, XiangqiCoordinate destination, XiangqiPiece piece)
+	public boolean isValid(XiangqiBoard board,XiangqiCoordinate source, XiangqiCoordinate destination, XiangqiPiece piece)
 	{
 		final XiangqiColor ownColor = piece.getColor();
 		

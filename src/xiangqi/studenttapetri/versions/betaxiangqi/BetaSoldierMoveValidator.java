@@ -17,18 +17,14 @@ import xiangqi.studenttapetri.common.movement.MoveValidator;
  */
 public class BetaSoldierMoveValidator implements MoveValidator
 {
-	private static XiangqiBoard board;
 
-	public BetaSoldierMoveValidator(XiangqiBoard board) 
-	{
-		this.board = board;
-	}
+	public BetaSoldierMoveValidator() {}
 	
 	/* 
 	 * @see xiangqi.studenttapetri.common.MoveValidator#isValid(xiangqi.common.XiangqiCoordinate, xiangqi.common.XiangqiCoordinate)
 	 */
 	@Override
-	public boolean isValid(XiangqiCoordinate source, XiangqiCoordinate destination, XiangqiPiece piece)
+	public boolean isValid(XiangqiBoard board, XiangqiCoordinate source, XiangqiCoordinate destination, XiangqiPiece piece)
 	{
 
 		final XiangqiColor ownColor = piece.getColor();

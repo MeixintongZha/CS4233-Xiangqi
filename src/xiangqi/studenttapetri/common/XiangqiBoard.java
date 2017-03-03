@@ -19,7 +19,7 @@ import xiangqi.studenttapetri.common.XiangqiPieceImpl;
  * pieces, instead of their aspect positions. 
  * 
  * @author Tim Petri
- * @version Feb 19, 2017
+ * @version Mar 3, 2017
  */
 public class XiangqiBoard
 {
@@ -114,7 +114,7 @@ public class XiangqiBoard
 	 */
 	public XiangqiBoard clone() 
 	{
-		XiangqiBoard clonedBoard = new XiangqiBoard(this.ranks, this.ranks);
+		XiangqiBoard clonedBoard = new XiangqiBoard(this.ranks, this.files);
 		clonedBoard.board.putAll(this.board);
 		return clonedBoard;
 	}
@@ -156,6 +156,11 @@ public class XiangqiBoard
 		return new XiangqiCoordinateImpl(normalizedRank, normalizedFile);
 	}
 	
+//	private XiangqiCoordinateImpl deNormalizeCoordinate(XiangqiCoordinate coord, XiangqiColor toAspect)
+//	{
+//		
+//	}
+	
 	/**
 	 * Returns true if the general with the given color has been captured.
 	 * 
@@ -166,6 +171,35 @@ public class XiangqiBoard
 	{
 		return (getGeneralCoordinates(generalColor) == null);
 	}
+	
+	/**
+	 * Returns true if the general with the given colored can be captured.
+	 * 
+	 * @param generalColor
+	 * @return whether the general is in check
+	 */
+	public boolean isGeneralInCheck(XiangqiColor generalColor)
+	{
+		XiangqiCoordinateImpl generalLocation = getGeneralCoordinates(generalColor);
+		
+		for (XiangqiCoordinateImpl loc: board.keySet()) 
+		{	
+			XiangqiPieceImpl piece = board.get(loc);	
+			
+			if (piece.getColor() != generalColor) {
+				
+				// normalize coordinates to piece's view
+				XiangqiCoordinateImpl normLoc = normalizeCoordinate(loc, piece.getColor());
+				XiangqiCoordinateImpl normGeneralLoc = normalizeCoordinate(generalLocation, piece.getColor());
+				
+				if (piece.isValidMove(this, normLoc, normGeneralLoc)) {
+					return true;
+				}
+				
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * Returns true if the general with the given color is in check mate.
@@ -174,7 +208,7 @@ public class XiangqiBoard
 	 */
 	public boolean isGeneralInCheckMate(XiangqiColor generalColor)
 	{
-		if (isGeneralThreatened(generalColor)) {
+		if (isGeneralInCheck(generalColor)) {
 			if (canGeneralMoveOutOfCheck(generalColor)) {
 				return false;
 			}
@@ -213,7 +247,7 @@ public class XiangqiBoard
 				board.remove(loc);
 				
 				// see if he is still in check
-				if (!isGeneralThreatened(generalColor))  {
+				if (!isGeneralInCheck(generalColor))  {
 					result = true;
 				}
 				
@@ -249,7 +283,7 @@ public class XiangqiBoard
 			board.remove(generalLocation);
 			
 			// see if he is still in check
-			if (!isGeneralThreatened(generalColor))  {
+			if (!isGeneralInCheck(generalColor))  {
 				result = true;
 			}
 			
@@ -265,23 +299,7 @@ public class XiangqiBoard
 		return result;
 	}
 
-	// Returns true if the given colored general can be captured by an enemy piece
-	private boolean isGeneralThreatened(XiangqiColor generalColor)
-	{
-		XiangqiCoordinateImpl generalLocation = getGeneralCoordinates(generalColor);
-		
-		for (XiangqiCoordinateImpl loc: board.keySet()) 
-		{	
-			XiangqiPieceImpl piece = board.get(loc);	
-			
-			if (piece.getColor() != generalColor && piece.isValidMove(loc, generalLocation)) {
 
-				return true;
-				
-			}
-		}
-		return false;
-	}
 	
 	// Get coordinates of the general in given color (null if general does not exist)
 	private XiangqiCoordinateImpl getGeneralCoordinates(XiangqiColor generalColor) {
@@ -311,7 +329,7 @@ public class XiangqiBoard
 				// if the piece is black, we need to unnormalize the coordinates for testing
 				XiangqiCoordinateImpl normFrom = normalizeCoordinate(loc, piece.getColor());
 				XiangqiCoordinateImpl normTo = normalizeCoordinate(c, piece.getColor());
-				if (piece.isValidMove(normFrom, normTo)) {
+				if (piece.isValidMove(this, normFrom, normTo)) {
 					valid.add(c);
 				}
 			}

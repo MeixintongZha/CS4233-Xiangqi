@@ -37,10 +37,10 @@ public class BetaXiangqiGame extends AbstractXiangqiGame
 	protected void placeStartingPieces()
 	{
 		// move rules
-		MoveValidator soldierRules = new BetaSoldierMoveValidator(board);
-		MoveValidator chariotRules = new ChariotMoveValidator(board);
-		MoveValidator advisorRules = new BetaAdvisorMoveValidator(board);
-		MoveValidator generalRules = new BetaGeneralMoveValidator(board);
+		MoveValidator soldierRules = new BetaSoldierMoveValidator();
+		MoveValidator chariotRules = new ChariotMoveValidator();
+		MoveValidator advisorRules = new BetaAdvisorMoveValidator();
+		MoveValidator generalRules = new BetaGeneralMoveValidator();
 		
 		// red pieces
 		XiangqiPieceImpl redGeneral = XiangqiPieceImpl.makePiece(XiangqiPieceType.GENERAL, XiangqiColor.RED, generalRules);
@@ -68,6 +68,13 @@ public class BetaXiangqiGame extends AbstractXiangqiGame
 		board.putPiece(XiangqiCoordinateImpl.makeCoordinate(1, 1), blackChariot, XiangqiColor.BLACK);
 		board.putPiece(XiangqiCoordinateImpl.makeCoordinate(1, 5), blackChariot, XiangqiColor.BLACK);	
 	}
+	
+	@Override
+	protected boolean repetitionOccured() { return false; } // beta does not check for perpetual states
+	
+	@Override
+	protected boolean isOwnGeneralInCheck() { return false; } // beta allows generals to be in check
+	
 
 
 }

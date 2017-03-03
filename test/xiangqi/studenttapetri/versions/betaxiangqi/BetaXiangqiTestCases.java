@@ -292,7 +292,7 @@ public class BetaXiangqiTestCases
 
 		// move black general 1 step right
 		assertEquals(MoveResult.OK, game.makeMove(makeCoordinate(1,3), makeCoordinate(1,4)));
-		// System.out.println(game.getMoveMessage());
+		//System.out.println(game.getMoveMessage());
 		assertEquals(XiangqiPieceType.GENERAL, game.getPieceAt(makeCoordinate(1,4), XiangqiColor.BLACK).getPieceType());	
 		
 		// fail to move red general 2 steps right, forward, and left

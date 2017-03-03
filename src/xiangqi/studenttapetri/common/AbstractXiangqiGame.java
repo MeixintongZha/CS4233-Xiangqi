@@ -1,5 +1,9 @@
 package xiangqi.studenttapetri.common;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Iterator;
+
 import xiangqi.common.MoveResult;
 import xiangqi.common.XiangqiColor;
 import xiangqi.common.XiangqiCoordinate;
@@ -14,7 +18,7 @@ import xiangqi.common.XiangqiPieceType;
  * is mostly shared.
  * 
  * @author Tim Petri
- * @version Feb 18, 2017
+ * @version Mar 2, 2017
  */
 public abstract class AbstractXiangqiGame implements XiangqiGame
 {
@@ -25,6 +29,7 @@ public abstract class AbstractXiangqiGame implements XiangqiGame
 	private static String messageGameWon = "The given move resulted in a win.";
 	private static String messageGameDraw = "The given more resulted in a draw.";
 	private static String messageGameAlreadyCompleted = "The game has already been completed.";
+	private static String messageGeneralMayNotBeLeftInCheck = "Own general may not be left in check after round is over";
 	
 	private static XiangqiColor STARTING_COLOR = XiangqiColor.RED;
 	
@@ -34,7 +39,9 @@ public abstract class AbstractXiangqiGame implements XiangqiGame
 	private String lastMoveMessage;
 	private XiangqiColor activeColor;
 
+	private Deque<XiangqiBoard> pastBoards;
 	protected XiangqiBoard board;
+	
 	
 	public AbstractXiangqiGame(int maxRounds)
 	{
@@ -43,7 +50,8 @@ public abstract class AbstractXiangqiGame implements XiangqiGame
 		gameCompleted = false;
 		roundCount = 1;
 		lastMoveMessage = "";
-
+		
+		pastBoards = new ArrayDeque<>();
 		addBoard();
 		placeStartingPieces();
 	}
@@ -90,17 +98,34 @@ public abstract class AbstractXiangqiGame implements XiangqiGame
 			return MoveResult.ILLEGAL;
 		}
 		
+		// save old board
+		pastBoards.addLast(board.clone());
+		
+		// make move
 		board.movePiece(source, destination, activeColor);
 		
-		if (wasGeneralCaptured() || wasGeneralPutInCheckMate()) {
+		// hook
+		if (isOwnGeneralInCheck()) {
+			revertMove();	
+			setMoveMessage(messageGeneralMayNotBeLeftInCheck);
+			return MoveResult.ILLEGAL;
+		}
+		
+		// hook
+		if (repetitionOccured()) {
+			setMoveMessage(messageGameWon);
+			gameCompleted = true;
+			return (activeColor == XiangqiColor.RED) ? MoveResult.BLACK_WINS :
+				MoveResult.RED_WINS;
+		}
+		
+		if (wasOpponentGeneralCaptured() || wasOpponentGeneralPutInCheckMate()) {
 			
 			setMoveMessage(messageGameWon);
 			gameCompleted = true;
 			return (activeColor == XiangqiColor.RED) ? MoveResult.RED_WINS :
 				MoveResult.BLACK_WINS;
 		}
-		
-		
 		
 		// check if game is over
 		if (isEndOfFinalRound()) {
@@ -111,10 +136,33 @@ public abstract class AbstractXiangqiGame implements XiangqiGame
 		
 		// update round count and active color
 		updateGameStats();
-		
 		return MoveResult.OK;
 	}
 	
+	// Returns true if the first and third of the last 4 states were the same as this state
+	protected boolean repetitionOccured()
+	{
+		if (roundCount < 5) return false;
+		Iterator<XiangqiBoard> pbi = pastBoards.iterator();
+		
+		if (!this.board.equals(pbi.next())) {
+			return false; // M1
+		}
+		pbi.next(); pbi.next(); pbi.next();
+		if (!this.board.equals(pbi.next())) {
+			return false; // M3
+		}
+		
+		return true;
+		
+	}
+
+	// revert last move using queue of old states
+	private void revertMove()
+	{
+		this.board = pastBoards.removeLast();
+	}
+
 	/* (non-Javadoc)
 	 * @see xiangqi.common.XiangqiGame#getPieceAt(xiangqi.common.XiangqiCoordinate, xiangqi.common.XiangqiColor)
 	 */
@@ -132,6 +180,11 @@ public abstract class AbstractXiangqiGame implements XiangqiGame
 	{
 		return lastMoveMessage;
 	}
+
+	protected boolean isOwnGeneralInCheck()
+	{
+		return board.isGeneralInCheck(activeColor);
+	}
 	
 	public XiangqiColor getActiveColor()
 	{
@@ -148,20 +201,20 @@ public abstract class AbstractXiangqiGame implements XiangqiGame
 		return (activeColor == XiangqiColor.RED) ? XiangqiColor.BLACK : XiangqiColor.RED;
 	}	
 	
-	private boolean wasGeneralPutInCheckMate()
+	private boolean wasOpponentGeneralPutInCheckMate()
 	{
 		// return false;
 		return board.isGeneralInCheckMate(opponentColor());
 	}
 
-	private boolean wasGeneralCaptured()
+	private boolean wasOpponentGeneralCaptured()
 	{
 		return board.isGeneralCaptured(opponentColor());
 	}
 
 	private boolean moveIsValid(XiangqiCoordinate source, XiangqiCoordinate destination)
 	{
-		return board.getPieceAt(source, activeColor).isValidMove(source, destination);
+		return board.getPieceAt(source, activeColor).isValidMove(this.board, source, destination);
 	}
 
 	private boolean sourcePieceMatchesActiveColor(XiangqiCoordinate source)
@@ -188,6 +241,7 @@ public abstract class AbstractXiangqiGame implements XiangqiGame
 	{
 		roundCount += (activeColor == STARTING_COLOR) ? 0 : 1;	
 		activeColor = opponentColor();
+		if (pastBoards.size() >= 8) pastBoards.removeFirst();
 	}
 
 }

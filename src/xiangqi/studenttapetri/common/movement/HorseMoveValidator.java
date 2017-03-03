@@ -15,16 +15,11 @@ import xiangqi.studenttapetri.common.XiangqiCoordinateImpl;
  */
 public class HorseMoveValidator implements MoveValidator
 {
-	
-	private XiangqiBoard board;
 
-	public HorseMoveValidator(XiangqiBoard board)
-	{
-		this.board = board;
-	}
+	public HorseMoveValidator() {}
 
 	@Override
-	public boolean isValid(XiangqiCoordinate source, XiangqiCoordinate destination, XiangqiPiece piece)
+	public boolean isValid(XiangqiBoard board, XiangqiCoordinate source, XiangqiCoordinate destination, XiangqiPiece piece)
 	{
 		final XiangqiColor ownColor = piece.getColor();
 		

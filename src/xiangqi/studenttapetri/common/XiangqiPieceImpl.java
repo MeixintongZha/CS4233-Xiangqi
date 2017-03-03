@@ -71,9 +71,9 @@ public class XiangqiPieceImpl implements XiangqiPiece
 	 * @param destination
 	 * @return whether the move is valid
 	 */
-	public boolean isValidMove(XiangqiCoordinate source, XiangqiCoordinate destination) {
+	public boolean isValidMove(XiangqiBoard board, XiangqiCoordinate source, XiangqiCoordinate destination) {
 		
-		return moveValidator.isValid(source, destination, this);
+		return moveValidator.isValid(board, source, destination, this);
 	}
 
 }

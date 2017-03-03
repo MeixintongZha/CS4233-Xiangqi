@@ -17,14 +17,11 @@ import xiangqi.studenttapetri.common.movement.MoveValidator;
  */
 public class BetaAdvisorMoveValidator implements MoveValidator
 {
-	
-	private XiangqiBoard board;
-
 	/* 
 	 * @see xiangqi.studenttapetri.common.MoveValidator#isValid(xiangqi.common.XiangqiCoordinate, xiangqi.common.XiangqiCoordinate, xiangqi.common.XiangqiPiece)
 	 */
 	@Override
-	public boolean isValid(XiangqiCoordinate source, XiangqiCoordinate destination, XiangqiPiece piece)
+	public boolean isValid(XiangqiBoard board, XiangqiCoordinate source, XiangqiCoordinate destination, XiangqiPiece piece)
 	{
 		
 		final XiangqiColor ownColor = piece.getColor();
@@ -50,9 +47,6 @@ public class BetaAdvisorMoveValidator implements MoveValidator
 		return false;
 	}
 	
-	public BetaAdvisorMoveValidator(XiangqiBoard board) 
-	{
-		this.board = board;
-	}
+	public BetaAdvisorMoveValidator() {}
 
 }
